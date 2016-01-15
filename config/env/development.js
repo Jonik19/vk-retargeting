@@ -11,6 +11,7 @@ module.exports = {
     host: 'localhost'
   },
   secrets: {
-    authentication: 'secret'
+    authentication: 'secret',
+    password: 'secret'
   }
 };

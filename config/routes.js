@@ -1,8 +1,10 @@
 'use strict';
 
 var jwt = require('koa-jwt');
+var bodyparser = require('koa-bodyparser');
 var router = require('koa-router')();
 
+router.use(bodyparser());
 
 /**
  * Your routes go here
@@ -24,6 +26,8 @@ var authenticationController = require('../app/authentication/controllers/authen
 
 router.get('/sign-out', authenticationController.onlyAuthenticated);
 router.get('/sign-out', authenticationController.signOut);
+
+router.get('/sign-up', authenticationController.signUp);
 
 router.get('/sign-in', authenticationController.signIn);
 router.get('/sign-in', function *(next) {
