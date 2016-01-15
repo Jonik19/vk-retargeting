@@ -4,12 +4,15 @@
   "description": "API for purchases application",
   "main": "server.js",
   "scripts": {
-    "start": "./node_modules/nodemon/bin/nodemon.js server.js",
+    "start": "NODE_PATH=./config ./node_modules/nodemon/bin/nodemon.js server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^1.8.1"
+  },
+  "dependencies": {
+    "extend": "^3.0.0"
   }
 }
