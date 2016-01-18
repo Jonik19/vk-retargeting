@@ -9,7 +9,7 @@ var app = koa();
 var sequelize = require('database');
 var config = require('config');
 
-var routes = require('./config/routes');
+var router = require('./config/routes').init(app);
 
 /**
  * Load domains and sync database
@@ -30,8 +30,8 @@ sequelize.sync().then(function () {
  */
 
 app
-  .use(routes.routes())
-  .use(routes.allowedMethods());
+  .use(router.routes())
+  .use(router.allowedMethods());
 
 app.listen(config.http.port, function () {
   console.log(`Server is listening on ${config.http.port} port`);
