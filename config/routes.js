@@ -27,7 +27,7 @@ router.use(errorsController.catchAll);
 
 var authenticationController = require('modules/authentication/controllers/authentication_controller');
 
-router.post('/sign-out', compose([authenticationController.onlyAuthenticated, authenticationController.signOut]));
+//router.post('/sign-out', compose([authenticationController.onlyAuthenticated, authenticationController.signOut]));
 router.post('/sign-up', compose([authenticationController.onlyNotAuthenticated, authenticationController.signUp]));
 router.post('/sign-in', compose([authenticationController.onlyNotAuthenticated, authenticationController.signIn]));
 
