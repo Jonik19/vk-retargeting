@@ -3,13 +3,13 @@
 var path = require('path');
 var fs = require('fs');
 
+var koa = require('koa');
+var app = koa();
+
 var sequelize = require('database');
 var config = require('config');
-var koa = require('koa');
 
 var routes = require('./config/routes');
-
-var app = koa();
 
 /**
  * Load domains and sync database
