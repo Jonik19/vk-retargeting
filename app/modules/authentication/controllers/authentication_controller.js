@@ -115,6 +115,10 @@ function generateUserResponse(user, token) {
  */
 
 function getTokenFromHeader(header) {
+  if(!/^Bearer\s.+$/.test(header)) {
+    return null;
+  }
+
   return header.replace('Bearer ', '');
 }
 
