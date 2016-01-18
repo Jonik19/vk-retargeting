@@ -5,54 +5,118 @@ var config = require('config');
 var Sequelize = require('sequelize');
 var sequelize = require('database');
 
-var tableName = 'users';
+/**
+ * Model options:
+ */
 
-var classMethods = {
+var options = {};
+
+/**
+ * Name of the table which will be in db
+ */
+
+options.tableName = 'users';
+
+/**
+ * Methods of the model's class. Example:
+ * ...
+ * User.someIndependentMethod()
+ */
+
+options.classMethods = {
   checkCredentials: checkCredentials
 };
 
-var instanceMethods = {
+/**
+ * Methods of the model's instance. Example:
+ *
+ * var user = User.create({});
+ * ...
+ * user.someModelsMethod();
+ */
 
+options.instanceMethods = {
+  checkCredentials: checkCredentials
 };
 
-var User = module.exports = sequelize.define('User', {
+/**
+ * List of table indexes
+ *
+ */
+
+options.indexes = [
+  { unique: true, fields: ['username'] }
+];
+
+/**
+ * Model definition:
+ */
+
+var User = sequelize.define('User', {
   username: {
     type: Sequelize.STRING,
-    field: 'username'
+    field: 'username',
+    allowNull: false,
+    validate: {
+      is: /^[a-zA-Z0-9]+$/i
+    }
   },
   name: {
     type: Sequelize.STRING,
-    field: 'name'
+    field: 'name',
+    allowNull: false,
+    validate: {}
   },
   password_hash: {
     type: Sequelize.STRING,
-    field: 'password_hash'
+    field: 'password_hash',
+    allowNull: false,
+    validate: {}
   },
   password: {
     type: Sequelize.VIRTUAL,
     set: function (val) {
       this.setDataValue('password', val);
-      this.setDataValue('password_hash', hashPassword(val));
+      this.setDataValue('password_hash', hashPassword(val, config.secrets.password));
+    },
+    validate: {
+      len: [6, 100]
     }
   }
-}, {
-  tableName: tableName,
-  classMethods: classMethods,
-  instanceMethods: instanceMethods
-});
+}, options);
 
 /**
- * Class methods definitions
- **/
+ * Class methods definitions:
+ */
 
-function checkCredentials(username, password) {
+/**
+ * Check user credentials. If credentials are correct then resolves current user from db
+ * otherwise resolves a null value.
+ *
+ * @param {Object} options Object which consists of username and password fields
+ * @returns {Promise}
+ */
+
+function checkCredentials(options) {
+  options = options || {};
+
   return new Promise(function (resolve, reject) {
-    User.findOne({ where: {username: username, password_hash: hashPassword(password)} })
+    User.findOne({ where: {username: options.username, password_hash: hashPassword(options.password, config.secrets.password)} })
     .then(resolve)
     .catch(reject);
   });
 }
 
-function hashPassword(password) {
-  return md5(`${password}${config.secrets.password}`);
+/**
+ * Returns hash of password and secret in md5 format.
+ *
+ * @param {String} password
+ * @param {String} salt
+ * @returns {String}
+ */
+
+function hashPassword(password, salt) {
+  return md5(password + salt);
 }
+
+module.exports = User;
