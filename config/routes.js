@@ -1,10 +1,13 @@
 'use strict';
 
 var jwt = require('koa-jwt');
-var bodyparser = require('koa-bodyparser');
+var mount = require('koa-mount');
+var compose = require('koa-compose');
+var bodyParser = require('koa-bodyparser');
+
 var router = require('koa-router')();
 
-router.use(bodyparser());
+router.use(bodyParser());
 
 /**
  * Your routes go here
@@ -24,14 +27,24 @@ router.use(errorsController.catchAll);
 
 var authenticationController = require('../app/authentication/controllers/authentication_controller');
 
-router.get('/sign-out', authenticationController.onlyAuthenticated);
-router.get('/sign-out', authenticationController.signOut);
+router.post('/sign-out', compose([authenticationController.onlyAuthenticated, authenticationController.signOut]));
+router.post('/sign-up', compose([authenticationController.onlyNotAuthenticated, authenticationController.signUp]));
+router.post('/sign-in', compose([authenticationController.onlyNotAuthenticated, authenticationController.signIn]));
 
-router.get('/sign-up', authenticationController.signUp);
+/**
+ * Routes: Rooms
+ */
 
-router.get('/sign-in', authenticationController.signIn);
-router.get('/sign-in', function *(next) {
-  this.body = 'last';
+router.use(mount('/rooms', authenticationController.onlyAuthenticated));
+
+router.get('/rooms', function *(next) {
+  this.body = 'I am authenticated';
 });
+
+/**
+ * Routes: Purchases
+ */
+
+router.use(mount('/purchases', authenticationController.onlyAuthenticated));
 
 module.exports = router;
