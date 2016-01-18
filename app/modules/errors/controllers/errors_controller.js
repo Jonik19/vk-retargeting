@@ -1,6 +1,7 @@
 'use strict';
 
 var config = require('config');
+var Response = require('helpers/response');
 var handlers = require('../services/handlers');
 
 var controller = {};
@@ -17,11 +18,11 @@ controller.catchAll = function *(next) {
   } catch(err) {
     console.log(err);
 
-    return sendErrorResponse.call(this, err);
+    return sendErrorResponse(this, err);
   }
 
   if(undefined === this.body) {
-    sendErrorResponse.call(this, { name: 'NotFound' });
+    sendErrorResponse(this, { name: 'NotFoundError' });
   }
 };
 
@@ -50,17 +51,18 @@ function generateError(error) {
  * Sets body with error response. Must be called in context of route (this === ctx).
  * Example:
  * ...
- * sendErrorResponse.call(this, error);
- * sendErrorResponse.apply(this, [error]);
+ * sendErrorResponse(this, error);
+ * sendErrorResponse(this, [error]);
  *
+ * @param {Object} ctx Any error object
  * @param {Object} err Any error object
  */
 
-function sendErrorResponse(err) {
+function sendErrorResponse(ctx, err) {
   let generatedError = generateError(err);
 
-  this.body = generatedError.response;
-  this.status = generatedError.status || 500;
+  var response = new Response(ctx, generatedError.response);
+  response.error(generatedError.status);
 }
 
 
