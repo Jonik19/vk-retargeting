@@ -5,56 +5,53 @@ var jwt = require('koa-jwt');
 
 var User = require('domains/user');
 
-module.exports = {
-  onlyAuthenticated: jwt({ secret: config.secrets.authentication }),
-  onlyNotAuthenticated: onlyNotAuthenticated,
-  signOut: signOut,
-  signUp: signUp,
-  signIn: signIn
-};
+/**
+ * Class definition
+ *
+ */
 
-function *signIn() {
-  var data = {};
-
-  data.username = this.request.query.username;
-  data.password = this.request.query.password;
-
-  // If exist in db, generate token and return it
-
-  var user = yield User.checkCredentials(data.username, data.password);
-
-  if(user === null) {
-    throw {message: 'Incorrect data', status: 400};
+class AuthenticationController {
+  static get onlyAuthenticated() {
+    return jwt({ secret: config.secrets.authentication });
   }
 
-  this.body = jwt.sign(user, config.secrets.authentication);
-}
+  static *onlyNotAuthenticated(next) {
+    try {
+      jwt.verify(this.header.authentication, config.secrets.authentication);
+    } catch(err) {
+      yield next;
+    }
+  }
 
-function *signUp(next) {
-  console.log('signUp');
-  var data = {};
+  static *signIn(next) {
+    var data = {
+      username: this.request.body.username,
+      password: this.request.body.password
+    };
 
-  data.username = this.request.query.username;
-  data.password = this.request.query.password;
+    var user = yield User.checkCredentials(data);
 
-  var user = yield User.create(data);
+    if(user === null) {
+      throw {message: 'Incorrect data', status: 400};
+    }
 
-  this.body = {
-    user: user,
-    token: jwt.sign(user, config.secrets.authentication)
-  };
-}
+    this.body = jwt.sign(user, config.secrets.authentication);
+  }
 
-function *signOut(next) {
-  this.body = 'Sign out';
+  static *signUp(next) {
+    var data = {
+      username: this.request.body.username,
+      name: this.request.body.name,
+      password: this.request.body.password
+    };
 
-  yield next;
-}
+    var user = yield User.create(data);
 
-function *onlyNotAuthenticated(next) {
-  try {
-    jwt.verify(this.header.authentication, config.secrets.authentication);
-  } catch(err) {
-    yield next;
+    this.body = {
+      user: user,
+      token: jwt.sign(user, config.secrets.authentication)
+    };
   }
 }
+
+module.exports = AuthenticationController;
