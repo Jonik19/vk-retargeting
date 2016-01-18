@@ -1,22 +1,67 @@
 'use strict';
 
 var config = require('config');
+var handlers = require('../services/handlers');
 
-module.exports = {
-  catchAll: catchAll
-};
+var controller = {};
 
-function *catchAll(next) {
+/**
+ * Catches all errors which happen in the middleware stream.
+ *
+ * @param next Next middleware function
+ */
+
+controller.catchAll = function *(next) {
   try {
     yield next;
   } catch(err) {
-    // Generate error base on name of an error
-    // for example if err.name ==='SequelizeValidationError'
-    // show validation error
-
     console.log(err);
 
-    this.body = err.message;
-    this.status = err.status || 500;
+    return sendErrorResponse.call(this, err);
   }
+
+  if(undefined === this.body) {
+    sendErrorResponse.call(this, { name: 'NotFound' });
+  }
+};
+
+/**
+ * Helpers definitions:
+ */
+
+/**
+ * Generates response error object.
+ *
+ * @param error Any error object
+ * @returns {Object} Returns generated response error object or empty object.
+ */
+
+function generateError(error) {
+  var handler = handlers[error.name];
+
+  if(undefined !== handler) {
+      return handler(error);
+  }
+
+  return {};
 }
+
+/**
+ * Sets body with error response. Must be called in context of route (this === ctx).
+ * Example:
+ * ...
+ * sendErrorResponse.call(this, error);
+ * sendErrorResponse.apply(this, [error]);
+ *
+ * @param {Object} err Any error object
+ */
+
+function sendErrorResponse(err) {
+  let generatedError = generateError(err);
+
+  this.body = generatedError.response;
+  this.status = generatedError.status || 500;
+}
+
+
+module.exports = controller;
