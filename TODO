@@ -2,3 +2,5 @@ TODO: list
 
 # 1. Add passport support
 # 2. Specify fields to return in toJSON method at user model
+# 3. Make password_confirmation
+# 4. Create Error classes and use them in different controllers like authentication ctrl.
