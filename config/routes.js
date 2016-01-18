@@ -5,46 +5,60 @@ var mount = require('koa-mount');
 var compose = require('koa-compose');
 var bodyParser = require('koa-bodyparser');
 
-var router = require('koa-router')();
+function init(app) {
+  var router = require('koa-router')();
 
-router.use(bodyParser());
+  /**
+   * Errors handling
+   */
 
-/**
- * Your routes go here
- */
+  var errorsController = require('modules/errors/controllers/errors_controller');
 
-/**
- * Errors handling
- */
+  app.use(errorsController.catchAll);
 
-var errorsController = require('modules/errors/controllers/errors_controller');
+  /**
+   * Helper middlewares
+   */
 
-router.use(errorsController.catchAll);
+  router.use(bodyParser());
 
-/**
- * Routes: Authentication
- */
+  /**
+   * Your routes go here
+   */
 
-var authenticationController = require('modules/authentication/controllers/authentication_controller');
+  /**
+   * Routes: Authentication
+   */
+
+  var authenticationController = require('modules/authentication/controllers/authentication_controller');
 
 //router.post('/sign-out', compose([authenticationController.onlyAuthenticated, authenticationController.signOut]));
-router.post('/sign-up', compose([authenticationController.onlyNotAuthenticated, authenticationController.signUp]));
-router.post('/sign-in', compose([authenticationController.onlyNotAuthenticated, authenticationController.signIn]));
+  router.post('/sign-up', compose([authenticationController.onlyNotAuthenticated, authenticationController.signUp]));
+  router.post('/sign-in', compose([authenticationController.onlyNotAuthenticated, authenticationController.signIn]));
 
-/**
- * Routes: Rooms
- */
+  /**
+   * Routes: Rooms
+   */
 
-router.use(mount('/rooms', authenticationController.onlyAuthenticated));
+  router.use(mount('/rooms', authenticationController.onlyAuthenticated));
 
-router.get('/rooms', function *(next) {
-  this.body = `I am authenticated ${this.state.user.username}`;
-});
+  router.get('/rooms', function *(next) {
+    this.body = `I am authenticated ${this.state.user.username}`;
+  });
 
-/**
- * Routes: Purchases
- */
+  /**
+   * Routes: Purchases
+   */
 
-router.use(mount('/purchases', authenticationController.onlyAuthenticated));
+  router.use(mount('/purchases', authenticationController.onlyAuthenticated));
 
-module.exports = router;
+  /**
+   * Return instance of router. Don't delete it.
+   */
+
+  return router;
+}
+
+module.exports = {
+  init: init
+};
