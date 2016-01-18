@@ -38,7 +38,7 @@ router.post('/sign-in', compose([authenticationController.onlyNotAuthenticated, 
 router.use(mount('/rooms', authenticationController.onlyAuthenticated));
 
 router.get('/rooms', function *(next) {
-  this.body = 'I am authenticated';
+  this.body = `I am authenticated ${this.state.user.username}`;
 });
 
 /**

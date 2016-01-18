@@ -1,3 +1,4 @@
 TODO: list
 
 # 1. Add passport support
+# 2. Specify fields to return in toJSON method at user model
