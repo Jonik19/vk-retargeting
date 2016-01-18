@@ -15,7 +15,7 @@ var controller = {};
 
 /**
  * Checks user authorization. If user is authorized calls next middleware
- * else throws UnauthorizedError
+ * else throws UnauthorizedError.
  * @param next
  */
 
@@ -23,7 +23,7 @@ controller.onlyAuthenticated = jwt({ secret: config.secrets.authentication });
 
 /**
  * Checks user NOT authorization. If user is not authorized calls next middleware
- * else throws UnauthorizedError
+ * else throws 'ForbiddenError' error.
  * @param next
  */
 
@@ -45,7 +45,7 @@ controller.onlyNotAuthenticated = function *(next) {
 /**
  * Authorizes user using passed data.
  * If success, then sends user and token to client
- * else throws 'IncorrectData' error;
+ * else throws 'IncorrectDataError' error.
  *
  * @param next Next middlware function or empty function
  */
@@ -69,7 +69,7 @@ controller.signIn = function *(next) {
 /**
  * Creates user using passed data and authorizes it.
  * If success, then sends user and token to client
- * else throws 'SequelizeValidationError' or 'SequelizeUniqueConstraintError' error;
+ * else throws 'SequelizeValidationError' or 'SequelizeUniqueConstraintError' error.
  *
  * @param next Next middlware function or empty function
  */
@@ -108,7 +108,7 @@ function generateUserResponse(user, token) {
 
 /**
  * Returns token from header format('Bearer token123456789')
- * to 'token123456789'
+ * to 'token123456789'.
  *
  * @param {String} header
  * @returns {String}

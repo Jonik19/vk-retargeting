@@ -3,3 +3,4 @@ TODO: list
 # 2. Specify fields to return in toJSON method at user model
 # 3. Make password_confirmation
 # 4. Create error generator for modules/errors/services/errors.js
+# 5. Move header names to config
