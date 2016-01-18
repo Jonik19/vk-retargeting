@@ -43,7 +43,7 @@ var User = module.exports = sequelize.define('User', {
 
 /**
  * Class methods definitions
- * */
+ **/
 
 function checkCredentials(username, password) {
   return new Promise(function (resolve, reject) {

@@ -3,7 +3,7 @@
 var config = require('config');
 var jwt = require('koa-jwt');
 
-var User = require('../../domains/user');
+var User = require('domains/user');
 
 module.exports = {
   onlyAuthenticated: jwt({ secret: config.secrets.authentication }),

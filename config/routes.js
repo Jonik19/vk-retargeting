@@ -17,7 +17,7 @@ router.use(bodyParser());
  * Errors handling
  */
 
-var errorsController = require('../app/errors/controllers/errors_controller');
+var errorsController = require('modules/errors/controllers/errors_controller');
 
 router.use(errorsController.catchAll);
 
@@ -25,7 +25,7 @@ router.use(errorsController.catchAll);
  * Routes: Authentication
  */
 
-var authenticationController = require('../app/authentication/controllers/authentication_controller');
+var authenticationController = require('modules/authentication/controllers/authentication_controller');
 
 router.post('/sign-out', compose([authenticationController.onlyAuthenticated, authenticationController.signOut]));
 router.post('/sign-up', compose([authenticationController.onlyNotAuthenticated, authenticationController.signUp]));
