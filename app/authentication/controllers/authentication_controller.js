@@ -7,6 +7,7 @@ var User = require('../../domains/user');
 
 module.exports = {
   onlyAuthenticated: jwt({ secret: config.secrets.authentication }),
+  onlyNotAuthenticated: onlyNotAuthenticated,
   signOut: signOut,
   signUp: signUp,
   signIn: signIn
@@ -30,6 +31,7 @@ function *signIn() {
 }
 
 function *signUp(next) {
+  console.log('signUp');
   var data = {};
 
   data.username = this.request.query.username;
@@ -37,9 +39,22 @@ function *signUp(next) {
 
   var user = yield User.create(data);
 
-  this.body = user;
+  this.body = {
+    user: user,
+    token: jwt.sign(user, config.secrets.authentication)
+  };
 }
 
 function *signOut(next) {
+  this.body = 'Sign out';
+
   yield next;
+}
+
+function *onlyNotAuthenticated(next) {
+  try {
+    jwt.verify(this.header.authentication, config.secrets.authentication);
+  } catch(err) {
+    yield next;
+  }
 }
