@@ -7,6 +7,36 @@
 3. `npm start`. It runs the project using local nodemon.
 4. Go to http://localhost:3000 and see ... nothing.
 
+### Authentication
+
+#### Sign Up
+To sign up make http post request to '/sign-up' passing such parameters at body
+```
+{
+  "username": "YourUsername",
+  "name": "YourName",
+  "password": "YourPassword123"
+}
+```
+
+If you pass correct data you will get response of user and token
+otherwise you will get ValidationError or any other error.
+
+#### Sign In
+To sign in make http post request to '/sign-in' passing such parameters at body
+```
+{
+  "username": "YourUsername",
+  "password": "YourPassword123"
+}
+```
+
+If you pass correct data you will get response of user and token
+otherwise you will get IncorrectData error or any other error.
+
+#### Sign Out
+It's impossible to sign out now.
+
 ### Change environment
 
 To change environment change NODE_ENV variable in `package.json start script`.
