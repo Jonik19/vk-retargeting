@@ -36,13 +36,43 @@ handlers['SequelizeValidationError'] = handlers['SequelizeUniqueConstraintError'
   };
 };
 
-handlers['NotFound'] = function (error) {
+handlers['NotFoundError'] = function (error) {
   return {
     response: {
       name: error.name,
       message: '404 Not Found'
     },
     status: 404
+  };
+};
+
+handlers['IncorrectDataError'] = function (error) {
+  return {
+    response: {
+      name: error.name,
+      message: 'Please, type correct data and try again'
+    },
+    status: 400
+  };
+};
+
+handlers['SyntaxError'] = function (error) {
+  return {
+    response: {
+      name: error.name,
+      message: 'Please, check data. You should send correct data.'
+    },
+    status: 400
+  };
+};
+
+handlers['ForbiddenError'] = function (error) {
+  return {
+    response: {
+      name: error.name,
+      message: 'Please, sign out to perform this action.'
+    },
+    status: 403
   };
 };
 
