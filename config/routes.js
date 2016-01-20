@@ -17,6 +17,14 @@ function init(app) {
   app.use(errorsController.catchAll);
 
   /**
+   * CORS
+   */
+
+  var corsController = require('modules/cors/controllers/cors_controller');
+
+  app.use(corsController.setAllowedHeaders);
+
+  /**
    * Helper middlewares
    */
 
