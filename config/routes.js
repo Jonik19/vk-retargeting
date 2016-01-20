@@ -17,6 +17,18 @@ function init(app) {
   app.use(errorsController.catchAll);
 
   /**
+   * CORS
+   */
+
+  app.use(function *(next) {
+    this.set('Access-Control-Allow-Headers', 'Accept, Content-type');
+    this.set('Access-Control-Allow-Origin', this.request.get('Origin'));
+    //this.set('Access-Control-Allow-Credentials', true);
+
+    yield next;
+  });
+
+  /**
    * Helper middlewares
    */
 

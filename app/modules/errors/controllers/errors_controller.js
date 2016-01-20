@@ -21,7 +21,7 @@ controller.catchAll = function *(next) {
     return sendErrorResponse(this, err);
   }
 
-  if(undefined === this.body) {
+  if(undefined === this.body && this.method !== 'OPTIONS') {
     sendErrorResponse(this, { name: 'NotFoundError' });
   }
 };
