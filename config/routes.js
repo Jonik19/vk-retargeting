@@ -20,13 +20,9 @@ function init(app) {
    * CORS
    */
 
-  app.use(function *(next) {
-    this.set('Access-Control-Allow-Headers', 'Accept, Content-type');
-    this.set('Access-Control-Allow-Origin', this.request.get('Origin'));
-    //this.set('Access-Control-Allow-Credentials', true);
+  var corsController = require('modules/cors/controllers/cors_controller');
 
-    yield next;
-  });
+  app.use(corsController.setAllowedHeaders);
 
   /**
    * Helper middlewares
