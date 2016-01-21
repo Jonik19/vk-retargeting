@@ -1,0 +1,79 @@
+'use strict';
+
+var config = require('config');
+var Sequelize = require('sequelize');
+var sequelize = require('database');
+
+/**
+ * Model options:
+ */
+
+var options = {};
+
+/**
+ * Name of the table which will be in db
+ */
+
+options.tableName = 'rooms';
+
+/**
+ * Methods of the model's class. Example:
+ * ...
+ * User.someIndependentMethod()
+ */
+
+options.classMethods = {
+  getByUserId: getByUserId
+};
+
+/**
+ * Methods of the model's instance. Example:
+ *
+ * var user = User.create({});
+ * ...
+ * user.someModelsMethod();
+ */
+
+options.instanceMethods = {
+
+};
+
+/**
+ * List of table indexes
+ *
+ */
+
+options.indexes = [
+
+];
+
+/**
+ * Model definition:
+ */
+
+var Room = sequelize.define('Room', {
+  user_id: {
+    type: Sequelize.INTEGER,
+    field: 'user_id',
+    allowNull: false,
+    validate: {}
+  },
+  name: {
+    type: Sequelize.STRING,
+    field: 'name',
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
+  }
+}, options);
+
+/**
+ * Class methods definitions:
+ */
+
+function getByUserId(userId) {
+  return Room.findAll({ where: { user_id: userId } });
+}
+
+module.exports = Room;
