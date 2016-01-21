@@ -88,6 +88,19 @@ controller.signUp = function *(next) {
 };
 
 /**
+ * Returns user from db. This route is available if user is authorized only.
+ *
+ * @param next
+ */
+
+controller.check = function *(next) {
+  var user = yield User.findById(this.state.user.id);
+
+  var response = new Response(this, { user: user });
+  response.success();
+};
+
+/**
  * Helper functions definitions:
  */
 

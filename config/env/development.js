@@ -17,6 +17,6 @@ module.exports = {
   cors: {
     maxAge: 60, // in seconds,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'UPDATE'],
-    headers: ['Accept', 'Content-type']
+    headers: ['Accept', 'Content-type', 'Authorization']
   }
 };
