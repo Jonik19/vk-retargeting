@@ -36,7 +36,7 @@ options.classMethods = {
  */
 
 options.instanceMethods = {
-  checkCredentials: checkCredentials
+
 };
 
 /**
