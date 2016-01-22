@@ -2,6 +2,7 @@
 
 var config = require('config');
 var jwt = require('koa-jwt');
+var compose = require('koa-compose');
 
 var Response = require('helpers/response');
 var User = require('domains/user');
@@ -14,12 +15,17 @@ var errors = require('modules/errors/services/errors');
 var controller = {};
 
 /**
- * Checks user authorization. If user is authorized calls next middleware
- * else throws UnauthorizedError.
+ * Checks user authorization. If user is authorized calls next middleware and writes current user model instance
+ * to the this.state.user property otherwise throws UnauthorizedError.
+ *
  * @param next
  */
 
-controller.onlyAuthenticated = jwt({ secret: config.secrets.authentication });
+controller.onlyAuthenticated = compose([jwt({ secret: config.secrets.authentication }), function *(next) {
+  this.state.user = User.build(this.state.user);
+
+  yield next;
+}]);
 
 /**
  * Checks user NOT authorization. If user is not authorized calls next middleware
