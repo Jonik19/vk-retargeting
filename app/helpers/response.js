@@ -39,7 +39,7 @@ Response.prototype.success = function (status) {
 
 Response.prototype.items = function (status) {
   this.data = {
-    items: this.data
+    items: this.data || []
   };
 
   this.success(status);

@@ -49,11 +49,11 @@ function init(app) {
    * Routes: Rooms
    */
 
-  router.use(mount('/rooms', authenticationController.onlyAuthenticated));
+  var roomsController = require('modules/admin/rooms/controllers/rooms_controller');
 
-  router.get('/rooms', function *(next) {
-    this.body = `I am authenticated ${this.state.user.username}`;
-  });
+  router.use(mount('/rooms', authenticationController.onlyAuthenticated));
+  router.get('/rooms', roomsController.index);
+  router.post('/rooms', roomsController.create);
 
   /**
    * Routes: Purchases

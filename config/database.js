@@ -17,7 +17,7 @@ var sequelize = new Sequelize(config.db.database, config.db.user, config.db.pass
     charset: 'utf8'
   },
 
-  force: true
+  force: false
 });
 
 module.exports = sequelize;

@@ -4,3 +4,4 @@ TODO: list
 # 3. Make password_confirmation
 # 4. Create error generator for modules/errors/services/errors.js
 # 5. Move header names to config
+# 6. Add catching unhandled error
