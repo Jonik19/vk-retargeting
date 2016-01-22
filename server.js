@@ -15,10 +15,10 @@ var router = require('./config/routes').init(app);
  * Load domains and sync database
  */
 
-fs.readdirSync(path.join(config.rootPath, 'app/domains'), function (err, file) {
-  if(err) console.log(err);
+let domaisnPath = path.join(config.rootPath, 'app/domains');
 
-  require(`./app/domains/${file}`);
+fs.readdirSync(domaisnPath).forEach(function (filename) {
+  require(`${domaisnPath}/${filename}`);
 });
 
 sequelize.sync().then(function () {
