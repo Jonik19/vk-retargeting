@@ -4,7 +4,9 @@ var config = require('config');
 
 var Response = require('helpers/response');
 var errors = require('modules/errors/services/errors');
+
 var Room = require('domains/room');
+var User = require('domains/user');
 
 /**
  * Methods definition:
@@ -19,17 +21,14 @@ var controller = {};
  */
 
 controller.index = function *(next) {
-  let rooms = yield Room.getByUserId(this.state.user.id);
-
-  console.log(rooms);
+  let rooms = yield this.state.user.getRooms();
 
   let response = new Response(this, rooms);
   response.items();
 };
 
 /**
- * Creates new room by user.
- * TODO: enters user in this room.
+ * Creates new room by user and enters user in this room.
  *
  * @param next
  */
@@ -41,6 +40,10 @@ controller.create = function *(next) {
   };
 
   let room = yield Room.create(data);
+
+  // Enter room by creator
+
+  yield this.state.user.addRoom(room);
 
   let response = new Response(this, room);
   response.success();
