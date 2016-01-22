@@ -88,8 +88,9 @@ function enter(options) {
     .then(function (room) {
       if(null === room) throw new errors.IncorrectDataError();
 
-        return room.addUser(options.user_id).then(function (response) {
-          if(0 === response.length) throw new errors.AlreadyInRoomError();
+        return room.addUser(options.user_id).then(function (inserted) {
+          // if nothing is added throw an error. It means that current user is already in this room
+          if(0 === inserted.length) throw new errors.AlreadyInRoomError();
 
           return true;
         });
