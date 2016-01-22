@@ -54,6 +54,7 @@ function init(app) {
   router.use(mount('/rooms', authenticationController.onlyAuthenticated));
   router.get('/rooms', roomsController.index);
   router.post('/rooms', roomsController.create);
+  router.post('/rooms/enter', roomsController.enter);
 
   /**
    * Routes: Purchases

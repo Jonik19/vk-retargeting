@@ -76,4 +76,14 @@ handlers['ForbiddenError'] = function (error) {
   };
 };
 
+handlers['AlreadyInRoomError'] = function (error) {
+  return {
+    response: {
+      name: error.name,
+      message: 'You can not enter to room, because you are already there.'
+    },
+    status: 400
+  };
+};
+
 module.exports = handlers;

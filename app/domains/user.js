@@ -5,6 +5,7 @@ var config = require('config');
 var Sequelize = require('sequelize');
 var sequelize = require('database');
 
+
 /**
  * Model options:
  */
@@ -75,6 +76,7 @@ var User = sequelize.define('User', {
   },
   password: {
     type: Sequelize.VIRTUAL,
+    allowNull: false,
     set: function (val) {
       this.setDataValue('password', val);
       this.setDataValue('password_hash', hashPassword(val, config.secrets.password));

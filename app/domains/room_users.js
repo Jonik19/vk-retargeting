@@ -47,7 +47,7 @@ options.instanceMethods = {
  */
 
 options.indexes = [
-
+  { unique: 'user_room_index', fields: ['user_id', 'room_id'] }
 ];
 
 /**
