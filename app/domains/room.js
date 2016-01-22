@@ -4,6 +4,8 @@ var config = require('config');
 var Sequelize = require('sequelize');
 var sequelize = require('database');
 
+var errors = require('modules/errors/services/errors');
+
 /**
  * Model options:
  */
@@ -23,7 +25,7 @@ options.tableName = 'rooms';
  */
 
 options.classMethods = {
-  getByUserId: getByUserId
+  enter: enter
 };
 
 /**
@@ -72,8 +74,26 @@ var Room = sequelize.define('Room', {
  * Class methods definitions:
  */
 
-function getByUserId(userId) {
-  return Room.findAll({ where: { user_id: userId } });
+/**
+ * Enters to specified room. If user is already in room throws 'AlreadyInRoomError' error.
+ *
+ * @param options ID of room to enter.
+ * @returns {Promise.<T>|*}
+ */
+
+function enter(options) {
+  options = options || {};
+
+  return Room.findById(options.room_id)
+    .then(function (room) {
+      if(null === room) throw new errors.IncorrectDataError();
+
+        return room.addUser(options.user_id).then(function (response) {
+          if(0 === response.length) throw new errors.AlreadyInRoomError();
+
+          return true;
+        });
+    });
 }
 
 module.exports = Room;
