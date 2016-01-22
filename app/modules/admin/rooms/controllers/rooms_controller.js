@@ -49,6 +49,24 @@ controller.create = function *(next) {
   response.success();
 };
 
+/**
+ * Enter to room.
+ *
+ * @param next
+ */
+
+controller.enter = function *(next) {
+  let data = {
+    room_id: this.request.body.id,
+    user_id: this.state.user.id
+  };
+
+  let success = yield Room.enter(data);
+
+  let response = new Response(this, success);
+  response.success();
+};
+
 
 
 module.exports = controller;
