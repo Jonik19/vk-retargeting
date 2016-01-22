@@ -5,6 +5,7 @@ var config = require('config');
 var Sequelize = require('sequelize');
 var sequelize = require('database');
 
+
 /**
  * Model options:
  */
