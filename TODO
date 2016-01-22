@@ -5,3 +5,4 @@ TODO: list
 # 4. Create error generator for modules/errors/services/errors.js
 # 5. Move header names to config
 # 6. Add catching unhandled error
+# 7. Describe input parameters of each method in controllers.
