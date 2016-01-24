@@ -16,6 +16,7 @@ controller.catchAll = function *(next) {
   try {
     yield next;
   } catch(err) {
+
     console.log(err);
 
     return sendErrorResponse(this, err);
