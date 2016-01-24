@@ -4,8 +4,6 @@ var config = require('config');
 var Sequelize = require('sequelize');
 var sequelize = require('database');
 
-var errors = require('modules/errors/services/errors');
-
 /**
  * Model options:
  */
@@ -25,7 +23,7 @@ options.tableName = 'rooms';
  */
 
 options.classMethods = {
-  enter: enter
+
 };
 
 /**
@@ -71,30 +69,14 @@ var Room = sequelize.define('Room', {
 }, options);
 
 /**
- * Class methods definitions:
+ * Fields to return on selects. It's using by security methods.
+ * For example, we don't need to return password or password_hash to clients.
  */
+
+Room.publicFields = ['id', 'name', 'user_id', 'createdAt', 'updatedAt'];
 
 /**
- * Enters to specified room. If user is already in room throws 'AlreadyInRoomError' error.
- *
- * @param options ID of room to enter.
- * @returns {Promise.<T>|*}
+ * Class methods definitions:
  */
-
-function enter(options) {
-  options = options || {};
-
-  return Room.findById(options.room_id)
-    .then(function (room) {
-      if(null === room) throw new errors.IncorrectDataError();
-
-        return room.addUser(options.user_id).then(function (inserted) {
-          // if nothing is added throw an error. It means that current user is already in this room
-          if(0 === inserted.length) throw new errors.AlreadyInRoomError();
-
-          return true;
-        });
-    });
-}
 
 module.exports = Room;

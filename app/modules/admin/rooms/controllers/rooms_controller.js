@@ -5,8 +5,8 @@ var config = require('config');
 var Response = require('helpers/response');
 var errors = require('modules/errors/services/errors');
 
-var Room = require('domains/room');
-var User = require('domains/user');
+var RoomRepo = require('repositories/room');
+var UserRepo = require('repositories/user');
 
 /**
  * Methods definition:
@@ -21,7 +21,7 @@ var controller = {};
  */
 
 controller.index = function *(next) {
-  let rooms = yield this.state.user.getRooms();
+  let rooms = yield UserRepo.getRooms(this.state.user.id);
 
   let response = new Response(this, rooms);
   response.items();
@@ -39,11 +39,7 @@ controller.create = function *(next) {
     user_id: this.state.user.id
   };
 
-  let room = yield Room.create(data);
-
-  // Enter room by creator
-
-  yield this.state.user.addRoom(room);
+  let room = yield RoomRepo.createAndEnter(data);
 
   let response = new Response(this, room);
   response.success();
@@ -61,12 +57,10 @@ controller.enter = function *(next) {
     user_id: this.state.user.id
   };
 
-  let success = yield Room.enter(data);
+  let success = yield RoomRepo.enter(data);
 
   let response = new Response(this, success);
   response.success();
 };
-
-
 
 module.exports = controller;

@@ -2,10 +2,9 @@
 
 var config = require('config');
 var jwt = require('koa-jwt');
-var compose = require('koa-compose');
 
 var Response = require('helpers/response');
-var User = require('domains/user');
+var UserRepo = require('repositories/user');
 var errors = require('modules/errors/services/errors');
 
 /**
@@ -21,11 +20,7 @@ var controller = {};
  * @param next
  */
 
-controller.onlyAuthenticated = compose([jwt({ secret: config.secrets.authentication }), function *(next) {
-  this.state.user = User.build(this.state.user);
-
-  yield next;
-}]);
+controller.onlyAuthenticated = jwt({ secret: config.authentication.secrets.sign });
 
 /**
  * Checks user NOT authorization. If user is not authorized calls next middleware
@@ -62,13 +57,13 @@ controller.signIn = function *(next) {
     password: this.request.body.password
   };
 
-  var user = yield User.checkCredentials(data);
+  var user = yield UserRepo.checkCredentials(data);
 
   if(user === null) {
     throw new errors.IncorrectDataError();
   }
 
-  var response = new Response(this, generateUserResponse(user, jwt.sign(user, config.secrets.authentication)));
+  var response = new Response(this, generateUserResponse(user, sign(user)));
   response.success();
 };
 
@@ -87,22 +82,22 @@ controller.signUp = function *(next) {
     password: this.request.body.password
   };
 
-  var user = yield User.create(data);
+  var user = yield UserRepo.create(data);
 
-  var response = new Response(this, generateUserResponse(user, jwt.sign(user, config.secrets.authentication)));
+  var response = new Response(this, generateUserResponse(user, sign(user)));
   response.success();
 };
 
 /**
- * Returns user from db. This route is available if user is authorized only.
+ * Returns user from db and newly generated token. This route is available if user is authorized only.
  *
  * @param next
  */
 
 controller.check = function *(next) {
-  var user = yield User.findById(this.state.user.id);
+  var user = yield UserRepo.findById(this.state.user.id);
 
-  var response = new Response(this, { user: user });
+  var response = new Response(this, generateUserResponse(user, sign(user)));
   response.success();
 };
 
@@ -111,7 +106,21 @@ controller.check = function *(next) {
  */
 
 /**
- * Generates common response for signUp and signIn methods.
+ * Signs passed user and returns authentication token.
+ * You can use this token to pass authentication in future.
+ *
+ * @param user User object to encode
+ * @returns {String} Token
+ */
+
+function sign(user) {
+  return jwt.sign(user, config.authentication.secrets.sign, {
+    expiresInSeconds: config.authentication.tokenExpiration
+  });
+}
+
+/**
+ * Generates common response for signUp, signIn and check methods.
  *
  * @param user User object from db
  * @param token JWT token

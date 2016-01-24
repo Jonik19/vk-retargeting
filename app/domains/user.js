@@ -5,7 +5,6 @@ var config = require('config');
 var Sequelize = require('sequelize');
 var sequelize = require('database');
 
-
 /**
  * Model options:
  */
@@ -25,7 +24,7 @@ options.tableName = 'users';
  */
 
 options.classMethods = {
-  checkCredentials: checkCredentials
+  hashPassword: hashPassword
 };
 
 /**
@@ -79,7 +78,7 @@ var User = sequelize.define('User', {
     allowNull: false,
     set: function (val) {
       this.setDataValue('password', val);
-      this.setDataValue('password_hash', hashPassword(val, config.secrets.password));
+      this.setDataValue('password_hash', User.hashPassword(val, config.authentication.secrets.password));
     },
     validate: {
       len: [6, 100]
@@ -88,26 +87,11 @@ var User = sequelize.define('User', {
 }, options);
 
 /**
- * Class methods definitions:
+ * Fields to return on selects. It's using by security methods.
+ * For example, we don't need to return password or password_hash to clients.
  */
 
-/**
- * Check user credentials. If credentials are correct then resolves current user from db
- * otherwise resolves a null value.
- *
- * @param {Object} options Object which consists of username and password fields
- * @returns {Promise}
- */
-
-function checkCredentials(options) {
-  options = options || {};
-
-  return new Promise(function (resolve, reject) {
-    User.findOne({ where: {username: options.username, password_hash: hashPassword(options.password, config.secrets.password)} })
-    .then(resolve)
-    .catch(reject);
-  });
-}
+User.publicFields = ['id', 'name', 'username', 'createdAt', 'updatedAt'];
 
 /**
  * Returns hash of password and secret in md5 format.
