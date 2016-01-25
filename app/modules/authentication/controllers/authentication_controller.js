@@ -32,7 +32,7 @@ controller.onlyNotAuthenticated = function *(next) {
   var token = getTokenFromHeader(this.header.authorization);
 
   try {
-    jwt.verify(token, config.secrets.authentication);
+    jwt.verify(token, config.authentication.secrets.sign);
   } catch(err) {
     return yield next;
   }
