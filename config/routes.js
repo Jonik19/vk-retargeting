@@ -60,7 +60,10 @@ function init(app) {
    * Routes: Purchases
    */
 
-  router.use(mount('/purchases', authenticationController.onlyAuthenticated));
+  var purchasesController = require('modules/admin/purchases/controllers/purchases_controller');
+
+  router.use(mount('/rooms/purchases', authenticationController.onlyAuthenticated));
+  router.get('/rooms/:roomId/purchases', purchasesController.index);
 
   /**
    * Return instance of router. Don't delete it.

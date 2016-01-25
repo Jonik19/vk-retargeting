@@ -6,7 +6,6 @@ var Response = require('helpers/response');
 var errors = require('modules/errors/services/errors');
 
 var RoomRepo = require('repositories/room');
-var UserRepo = require('repositories/user');
 
 /**
  * Methods definition:
@@ -21,7 +20,7 @@ var controller = {};
  */
 
 controller.index = function *(next) {
-  let rooms = yield UserRepo.getRooms(this.state.user.id);
+  let rooms = yield RoomRepo.getRooms(this.state.user.id);
 
   let response = new Response(this, rooms);
   response.items();
