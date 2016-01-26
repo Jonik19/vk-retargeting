@@ -5,7 +5,7 @@
 1. `npm install`. It installs all project's dependencies
 2. Set up MySQL database and type correct database connection settings in `config/env/development.js`
 3. `npm start`. It runs the project using local nodemon.
-4. Go to http://localhost:3000 and see ... nothing.
+4. Go to http://localhost:8080 and see result.
 
 ### Authentication
 
@@ -35,7 +35,7 @@ If you pass correct data you will get response of user and token
 otherwise you will get IncorrectData error or any other error.
 
 #### Sign Out
-It's impossible to sign out now.
+To sign out you need destroy token on your client side.
 
 ### Change environment
 
