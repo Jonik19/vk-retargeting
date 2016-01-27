@@ -9,4 +9,6 @@ TODO: list
 # 8. Change createdAt, updateAt to created_at and updated_at
 # 9. Generate getPurchases, getRooms, getUsers methods passing domains as parameters.
 # 10. Separate domains on folders
-# 11. Compose all create purchase_users queries into ONE !!!!!
+# 11. Compose all create purchase_users queries into ONE
+# 12. Problem with associations. hasMany and belongsToMany in purchases.
+# 13. Add transactions
