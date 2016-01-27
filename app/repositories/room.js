@@ -36,8 +36,8 @@ RoomRepo.create = function () {
  * Finds room by id.
  */
 
-RoomRepo.findById = function () {
-  return RoomDomain.findById.apply(RoomDomain, arguments)
+RoomRepo.getById = function (id) {
+  return RoomDomain.findById(id)
     .then(function (user) {
       return Repository.pickPublic(user, RoomDomain.publicFields);
     });
