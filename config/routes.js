@@ -46,6 +46,15 @@ function init(app) {
   router.get('/check', compose([authenticationController.onlyAuthenticated, authenticationController.check]));
 
   /**
+   * Routes: Users
+   */
+
+  var usersController = require('modules/admin/users/controllers/users_controller');
+
+  router.use(mount('/users', authenticationController.onlyAuthenticated));
+  router.get('/users/by_room/:roomId', usersController.byRoom);
+
+  /**
    * Routes: Rooms
    */
 
@@ -53,6 +62,7 @@ function init(app) {
 
   router.use(mount('/rooms', authenticationController.onlyAuthenticated));
   router.get('/rooms', roomsController.index);
+  router.get('/rooms/:id', roomsController.show);
   router.post('/rooms', roomsController.create);
   router.post('/rooms/enter', roomsController.enter);
 
@@ -64,6 +74,7 @@ function init(app) {
 
   router.use(mount('/rooms/purchases', authenticationController.onlyAuthenticated));
   router.get('/rooms/:roomId/purchases', purchasesController.index);
+  router.post('/rooms/:roomId/purchases', purchasesController.create);
 
   /**
    * Return instance of router. Don't delete it.
