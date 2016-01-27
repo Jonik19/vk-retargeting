@@ -1,6 +1,7 @@
 'use strict';
 
 var config = require('config');
+var _ = require('lodash');
 
 var Repository = require('helpers/repository');
 var sequelize = require('database');
@@ -24,14 +25,31 @@ var PurchaseRepo = function () {
  * Class methods definitions:
  */
 
+
 /**
- * Creates model and returns it.
+ * Creates purchase, adds users to the purchase.
+ * Returns newly created purchase.
  */
 
-PurchaseRepo.create = function () {
-  return PurchaseDomain.create.apply(PurchaseDomain, arguments)
-    .then(function (user) {
-      return Repository.pickPublic(user, PurchaseDomain.publicFields);
+PurchaseRepo.create = function (data) {
+  data = data || {};
+
+  _.assign(data, {
+    owner_id: data.owner_id,
+    room_id: data.room_id,
+    name: data.name,
+    amount: data.amount,
+    amount_per_user: getAmountPerUser(data.amount, data.users)
+  });
+
+  return PurchaseDomain.create(data)
+    .then(function (purchase) {
+      // TODO: Check for each user existing in the room.
+
+      return purchase.addPurchaseUsers(data.users)
+        .then(function (purchaseUsers) {
+          return purchase;
+        });
     });
 };
 
@@ -54,20 +72,22 @@ PurchaseRepo.findById = function () {
  * @returns {Promise.<T>|*}
  */
 
+let selectablePurchaseUsersFields = ['user_id'];
+
 PurchaseRepo.getPurchasesByRoomId = function (roomId) {
-  //'SELECT p.id, p.user_id, p.amount, GROUP_CONCAT(pu.user_id) as users FROM purchases as p LEFT JOIN purchase_users as pu ON p.id = pu.purchase_id WHERE p.room_id = 1 GROUP BY p.id;'
+  // TODO: move constants in config
 
   return PurchaseDomain.findAll({
     where: {room_id: roomId},
-    // TODO: move constants in config
-    include: [{model: PurchaseUsers, attributes: ['user_id'], as: 'users'}]
+    include: [{model: PurchaseUsers, attributes: selectablePurchaseUsersFields, as: 'users'}],
+    attributes:  PurchaseDomain.publicFields
   })
     .then(function (purchases) {
-      var publicFieldsWithUsers = PurchaseDomain.publicFields.concat('users');
+      let publicFieldsWithIncludes = PurchaseDomain.publicFields.concat('users');
 
       // TODO: bottleneck
       return purchases.map(function (purchase) {
-        return Repository.pickPublic(purchase, publicFieldsWithUsers);
+        return Repository.pickPublic(purchase, publicFieldsWithIncludes);
       });
     });
 };
@@ -76,5 +96,13 @@ PurchaseRepo.getPurchasesByRoomId = function (roomId) {
 /**
  * Helper functions
  */
+
+function getAmountPerUser(amount, users) {
+  if(Array.isArray(users) && users.length > 0) {
+    return amount/users.length;
+  }
+
+  throw new errors.IncorrectDataError();
+}
 
 module.exports = PurchaseRepo;
