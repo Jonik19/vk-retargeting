@@ -76,7 +76,17 @@ var Purchase = sequelize.define('Purchase', {
     type: Sequelize.INTEGER,
     field: 'amount',
     allowNull: false,
-    validate: {}
+    validate: {
+      min: 0
+    }
+  },
+  amount_per_user: {
+    type: Sequelize.INTEGER,
+    field: 'amount_per_user',
+    allowNull: false,
+    validate: {
+      min: 0
+    }
   }
 }, options);
 
@@ -85,7 +95,7 @@ var Purchase = sequelize.define('Purchase', {
  * For example, we don't need to return password or password_hash to clients.
  */
 
-Purchase.publicFields = ['id', 'name', 'owner_id', 'room_id', 'amount', 'createdAt', 'updatedAt'];
+Purchase.publicFields = ['id', 'name', 'owner_id', 'room_id', 'amount', 'amount_per_user', 'createdAt', 'updatedAt'];
 
 /**
  * Class methods definitions:
