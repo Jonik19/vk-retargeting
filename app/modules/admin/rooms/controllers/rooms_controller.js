@@ -2,7 +2,7 @@
 
 var config = require('config');
 
-var Response = require('helpers/response');
+var response = require('helpers/response');
 var errors = require('modules/errors/services/errors');
 
 var UserRepo = require('repositories/user');
@@ -23,8 +23,7 @@ var controller = {};
 controller.index = function *(next) {
   let rooms = yield RoomRepo.getRooms(this.state.user.id);
 
-  let response = new Response(this, rooms);
-  response.items();
+  response.items(this, rooms);
 };
 
 /**
@@ -44,8 +43,7 @@ controller.show = function *(next) {
 
   let room = yield RoomRepo.getById(data.room_id);
 
-  let response = new Response(this, room);
-  response.success();
+  response.success(this, room);
 };
 
 /**
@@ -62,8 +60,7 @@ controller.create = function *(next) {
 
   let room = yield RoomRepo.createAndEnter(data);
 
-  let response = new Response(this, room);
-  response.success();
+  response.success(this, room);
 };
 
 /**
@@ -80,8 +77,7 @@ controller.enter = function *(next) {
 
   let success = yield RoomRepo.enter(data);
 
-  let response = new Response(this, success);
-  response.success();
+  response.success(this, success);
 };
 
 module.exports = controller;

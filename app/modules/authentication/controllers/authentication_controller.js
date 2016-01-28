@@ -3,7 +3,7 @@
 var config = require('config');
 var jwt = require('koa-jwt');
 
-var Response = require('helpers/response');
+var response = require('helpers/response');
 var UserRepo = require('repositories/user');
 var errors = require('modules/errors/services/errors');
 
@@ -63,8 +63,7 @@ controller.signIn = function *(next) {
     throw new errors.IncorrectDataError();
   }
 
-  var response = new Response(this, generateUserResponse(user, sign(user)));
-  response.success();
+  response.success(this, generateUserResponse(user, sign(user)));
 };
 
 /**
@@ -84,8 +83,7 @@ controller.signUp = function *(next) {
 
   var user = yield UserRepo.create(data);
 
-  var response = new Response(this, generateUserResponse(user, sign(user)));
-  response.success();
+  response.success(this, generateUserResponse(user, sign(user)));
 };
 
 /**
@@ -97,8 +95,7 @@ controller.signUp = function *(next) {
 controller.check = function *(next) {
   var user = yield UserRepo.findById(this.state.user.id);
 
-  var response = new Response(this, generateUserResponse(user, sign(user)));
-  response.success();
+  response.success(this, generateUserResponse(user, sign(user)));
 };
 
 /**

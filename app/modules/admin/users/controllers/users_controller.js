@@ -2,7 +2,7 @@
 
 var config = require('config');
 
-var Response = require('helpers/response');
+var response = require('helpers/response');
 
 var UserRepo = require('repositories/user');
 
@@ -29,8 +29,7 @@ controller.byRoom = function *(next) {
 
   let users = yield UserRepo.getUsersByRoomId(data.room_id);
 
-  let response = new Response(this, users);
-  response.items();
+  response.items(this, users);
 };
 
 module.exports = controller;

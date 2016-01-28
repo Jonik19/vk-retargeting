@@ -2,7 +2,7 @@
 
 var config = require('config');
 
-var Response = require('helpers/response');
+var response = require('helpers/response');
 var errors = require('modules/errors/services/errors');
 
 var PurchaseRepo = require('repositories/purchase');
@@ -33,8 +33,7 @@ controller.index = function *(next) {
 
   let purchases = yield PurchaseRepo.getPurchasesByRoomId(data.room_id);
 
-  let response = new Response(this, purchases);
-  response.items();
+  response.items(this, purchases);
 };
 
 /**
@@ -61,8 +60,7 @@ controller.create = function *(next) {
 
   let purchase = yield PurchaseRepo.create(data);
 
-  let response = new Response(this, purchase);
-  response.success();
+  response.success(this, purchase);
 };
 
 module.exports = controller;
