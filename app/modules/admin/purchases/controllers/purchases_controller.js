@@ -23,9 +23,15 @@ var controller = {};
 
 controller.index = function *(next) {
 
-  // TODO: check user existing in db
+  let data = {
+    room_id: this.params.roomId,
+    user_id: this.state.user.id
+  };
 
-  let purchases = yield PurchaseRepo.getPurchasesByRoomId(this.params.roomId);
+  // Check user existing in this room
+  yield UserRepo.assertUserInRoom(data);
+
+  let purchases = yield PurchaseRepo.getPurchasesByRoomId(data.room_id);
 
   let response = new Response(this, purchases);
   response.items();
