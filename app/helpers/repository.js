@@ -1,11 +1,8 @@
 'use strict';
 
 var _ = require('lodash');
-var config = require('config');
 
-function Repository() {
-
-}
+var repository = {};
 
 /**
  * Returns object with allowed fields which are passed through second parameter.
@@ -15,10 +12,10 @@ function Repository() {
  * @returns {Object} Object with
  */
 
-Repository.pickPublic = function (model, publicFields) {
+repository.pickPublic = function (model, publicFields) {
   if(model === null) return model;
 
   return _.pick(model, publicFields);
 };
 
-module.exports = Repository;
+module.exports = repository;
