@@ -2,6 +2,7 @@
 
 var md5 = require('md5');
 var config = require('config');
+var errors = require('modules/errors/services/errors');
 
 var Repository = require('helpers/repository');
 
@@ -43,15 +44,14 @@ UserRepo.findById = function () {
 };
 
 /**
- * Get user rooms.
+ * Get room users.
  */
 
-UserRepo.getRooms = function (userId) {
-  return UserDomain.build({id: userId}).getRooms({ attributes: RoomDomain.publicFields})
-    .then(function (rooms) {
-      // TODO: bottleneck
-      return rooms.map(function (room) {
-        return Repository.pickPublic(room, RoomDomain.publicFields);
+UserRepo.getUsersByRoomId = function (roomId) {
+  return RoomDomain.build({id: roomId}).getUsers({ attributes: UserDomain.publicFields})
+    .then(function (users) {
+      return users.map(function (user) {
+        return Repository.pickPublic(user, UserDomain.publicFields);
       });
     });
 };
@@ -77,6 +77,33 @@ UserRepo.checkCredentials = function (options) {
     // to return native object instead Domain instance
     .then(function (user) {
       return Repository.pickPublic(user, UserDomain.publicFields);
+    });
+};
+
+/**
+ * Assert user existing in specified room. If user is not in room
+ * throws 'IncorrectData' error.
+ *
+ * @param {Object} options
+ * @param {Number} options.user_id
+ * @param {Number} options.room_id
+ * @returns {Promise.<T>|*}
+ */
+
+UserRepo.assertUserInRoom = function (options) {
+  options = options || {};
+
+  return RoomDomain.build({id: options.room_id}).getUsers({
+    where: {id: options.user_id},
+    attributes: UserDomain.publicFields
+  })
+    .then(function (users) {
+      // User is not in the room
+      if(users.length === 0) {
+        throw new errors.IncorrectDataError();
+      }
+
+      return users;
     });
 };
 

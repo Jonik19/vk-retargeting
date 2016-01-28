@@ -86,4 +86,14 @@ handlers['AlreadyInRoomError'] = function (error) {
   };
 };
 
+handlers['UnhandledError'] = function (error) {
+  return {
+    response: {
+      name: 'UnhandledError',
+      message: 'We don\'t know a cause of the problem.'
+    },
+    status: 500
+  };
+};
+
 module.exports = handlers;

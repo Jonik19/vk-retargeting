@@ -36,22 +36,26 @@ RoomRepo.create = function () {
  * Finds room by id.
  */
 
-RoomRepo.findById = function () {
-  return RoomDomain.findById.apply(RoomDomain, arguments)
+RoomRepo.getById = function (id) {
+  return RoomDomain.findById(id)
     .then(function (user) {
       return Repository.pickPublic(user, RoomDomain.publicFields);
     });
 };
 
 /**
- * Get room users.
+ * Get user rooms.
+ *
+ * @param userId ID of user
+ * @returns {Promise.<T>|*}
  */
 
-RoomRepo.getUsers = function (roomId) {
-  return RoomDomain.build({id: roomId}).getUsers({ attributes: UserDomain.publicFields})
-    .then(function (users) {
-      return users.map(function (user) {
-        return Repository.pickPublic(user, UserDomain.publicFields);
+RoomRepo.getRooms = function (userId) {
+  return UserDomain.build({id: userId}).getRooms({ attributes: RoomDomain.publicFields})
+    .then(function (rooms) {
+      // TODO: bottleneck
+      return rooms.map(function (room) {
+        return Repository.pickPublic(room, RoomDomain.publicFields);
       });
     });
 };

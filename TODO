@@ -6,3 +6,10 @@ TODO: list
 # 5. Move header names to config
 # 6. Add catching unhandled error
 # 7. Describe input parameters of each method in controllers.
+# 8. Change createdAt, updateAt to created_at and updated_at
+# 9. Generate getPurchases, getRooms, getUsers methods passing domains as parameters.
+# 10. Separate domains on folders
+# 11. Compose all create purchase_users queries into ONE
+# 12. Problem with associations. hasMany and belongsToMany in purchases.
+# 13. Add transactions
+# 14. Use DECIMAL type instead INTEGER

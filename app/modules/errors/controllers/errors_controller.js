@@ -23,7 +23,7 @@ controller.catchAll = function *(next) {
   }
 
   if(undefined === this.body && this.method !== 'OPTIONS') {
-    sendErrorResponse(this, { name: 'NotFoundError' });
+    return sendErrorResponse(this, { name: 'NotFoundError' });
   }
 };
 
@@ -41,11 +41,12 @@ controller.catchAll = function *(next) {
 function generateError(error) {
   var handler = handlers[error.name];
 
-  if(undefined !== handler) {
-      return handler(error);
+  // catch unhandled errors
+  if(undefined === handler) {
+    handler = handlers['UnhandledError'];
   }
 
-  return {};
+  return handler(error);
 }
 
 /**

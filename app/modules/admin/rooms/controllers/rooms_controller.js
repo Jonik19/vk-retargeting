@@ -5,8 +5,8 @@ var config = require('config');
 var Response = require('helpers/response');
 var errors = require('modules/errors/services/errors');
 
-var RoomRepo = require('repositories/room');
 var UserRepo = require('repositories/user');
+var RoomRepo = require('repositories/room');
 
 /**
  * Methods definition:
@@ -21,10 +21,31 @@ var controller = {};
  */
 
 controller.index = function *(next) {
-  let rooms = yield UserRepo.getRooms(this.state.user.id);
+  let rooms = yield RoomRepo.getRooms(this.state.user.id);
 
   let response = new Response(this, rooms);
   response.items();
+};
+
+/**
+ * Returns specified room only if user is in this room.
+ *
+ * @param next
+ */
+
+controller.show = function *(next) {
+  let data = {
+    room_id: this.params.id,
+    user_id: this.state.user.id
+  };
+
+  // Check user existing in this room
+  yield UserRepo.assertUserInRoom(data);
+
+  let room = yield RoomRepo.getById(data.room_id);
+
+  let response = new Response(this, room);
+  response.success();
 };
 
 /**
