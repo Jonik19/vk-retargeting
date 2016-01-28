@@ -12,3 +12,4 @@ TODO: list
 # 11. Compose all create purchase_users queries into ONE
 # 12. Problem with associations. hasMany and belongsToMany in purchases.
 # 13. Add transactions
+# 14. Use DECIMAL type instead INTEGER
