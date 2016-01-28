@@ -1,6 +1,6 @@
 'use strict';
 
-var md5 = require('md5');
+var crypto = require('crypto');
 var config = require('config');
 var Sequelize = require('sequelize');
 var sequelize = require('database');
@@ -102,7 +102,8 @@ User.publicFields = ['id', 'name', 'username', 'createdAt', 'updatedAt'];
  */
 
 function hashPassword(password, salt) {
-  return md5(password + salt);
+  return crypto.createHmac('sha256', salt)
+    .update(password).digest('hex');
 }
 
 module.exports = User;
