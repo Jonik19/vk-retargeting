@@ -1,13 +1,14 @@
 'use strict';
 
-var md5 = require('md5');
 var config = require('config');
+
 var errors = require('modules/errors/services/errors');
 
 var Repository = require('helpers/repository');
+var models = require('../models');
 
-var UserDomain = require('domains/user');
-var RoomDomain = require('domains/room');
+var UserDomain = models.User;
+var RoomDomain = models.Room;
 
 /**
  * Model definition:

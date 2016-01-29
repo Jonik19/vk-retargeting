@@ -2,12 +2,13 @@
 
 var config = require('config');
 
-var Repository = require('helpers/repository');
-
-var UserDomain = require('domains/user');
-var RoomDomain = require('domains/room');
-
 var errors = require('modules/errors/services/errors');
+
+var Repository = require('helpers/repository');
+var models = require('../models');
+
+var UserDomain = models.User;
+var RoomDomain = models.Room;
 
 /**
  * Model definition:

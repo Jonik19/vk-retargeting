@@ -1,17 +1,15 @@
 'use strict';
 
-var config = require('config');
 var _ = require('lodash');
 
-var Repository = require('helpers/repository');
-var sequelize = require('database');
-
-var UserDomain = require('domains/user');
-var PurchaseDomain = require('domains/purchase');
-var RoomDomain = require('domains/room');
-var PurchaseUsers = require('domains/purchase_users');
-
+var config = require('config');
 var errors = require('modules/errors/services/errors');
+
+var Repository = require('helpers/repository');
+var models = require('../models');
+
+var PurchaseDomain = models.Purchase;
+var PurchaseUsers = models.PurchaseUsers;
 
 /**
  * Model definition:

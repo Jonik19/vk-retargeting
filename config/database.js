@@ -20,4 +20,5 @@ var sequelize = new Sequelize(config.db.database, config.db.user, config.db.pass
   force: false
 });
 
+
 module.exports = sequelize;
