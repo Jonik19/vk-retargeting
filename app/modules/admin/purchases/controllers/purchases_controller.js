@@ -24,14 +24,14 @@ var controller = {};
 controller.index = function *(next) {
 
   let data = {
-    room_id: this.params.roomId,
-    user_id: this.state.user.id
+    roomId: this.params.roomId,
+    userId: this.state.user.id
   };
 
   // Check user existing in this room
   yield UserRepo.assertUserInRoom(data);
 
-  let purchases = yield PurchaseRepo.getPurchasesByRoomId(data.room_id);
+  let purchases = yield PurchaseRepo.getPurchasesByRoomId(data.roomId);
 
   response.items(this, purchases);
 };
@@ -44,8 +44,8 @@ controller.index = function *(next) {
 
 controller.create = function *(next) {
   let data = {
-    owner_id: this.state.user.id, // id of user which makes this purchase
-    room_id: this.params.roomId, // id of the room to insert this purchase
+    ownerId: this.state.user.id, // id of user which makes this purchase
+    roomId: this.params.roomId, // id of the room to insert this purchase
     name: this.request.body.name, // name of the purchase
     amount: this.request.body.amount, // Full price of the purchase
     // TODO: users must be an array
@@ -54,8 +54,8 @@ controller.create = function *(next) {
 
   // Check user existing in this room
   yield UserRepo.assertUserInRoom({
-    user_id: data.owner_id,
-    room_id: data.room_id
+    userId: data.ownerId,
+    roomId: data.roomId
   });
 
   let purchase = yield PurchaseRepo.create(data);

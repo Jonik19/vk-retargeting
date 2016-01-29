@@ -52,7 +52,7 @@ options.indexes = [
  */
 
 var Room = sequelize.define('Room', {
-  user_id: {
+  userId: {
     type: Sequelize.INTEGER,
     field: 'user_id',
     allowNull: false,
@@ -73,7 +73,7 @@ var Room = sequelize.define('Room', {
  * For example, we don't need to return password or password_hash to clients.
  */
 
-Room.publicFields = ['id', 'name', 'user_id', 'createdAt', 'updatedAt'];
+Room.publicFields = ['id', 'name', 'userId', 'createdAt', 'updatedAt'];
 
 /**
  * Class methods definitions:

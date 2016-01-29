@@ -67,7 +67,7 @@ var User = sequelize.define('User', {
     allowNull: false,
     validate: {}
   },
-  password_hash: {
+  passwordHash: {
     type: Sequelize.STRING,
     field: 'password_hash',
     allowNull: false,
@@ -78,7 +78,7 @@ var User = sequelize.define('User', {
     allowNull: false,
     set: function (val) {
       this.setDataValue('password', val);
-      this.setDataValue('password_hash', User.hashPassword(val, config.authentication.secrets.password));
+      this.setDataValue('passwordHash', User.hashPassword(val, config.authentication.secrets.password));
     },
     validate: {
       len: [6, 100]

@@ -8,4 +8,4 @@ let Purchase = require('domains/purchase');
 let Room = require('domains/room');
 
 
-Room.hasMany(Purchase, { foreignKey: 'room_id' });
+Room.hasMany(Purchase, { foreignKey: 'roomId' });

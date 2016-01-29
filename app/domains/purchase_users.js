@@ -59,6 +59,18 @@ var PurchaseUsers = sequelize.define('PurchaseUsers', {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true
+  },
+  userId: {
+    type: Sequelize.INTEGER,
+    field: 'user_id',
+    allowNull: false,
+    validate: {}
+  },
+  purchaseId: {
+    type: Sequelize.INTEGER,
+    field: 'purchase_id',
+    allowNull: false,
+    validate: {}
   }
 }, options);
 
@@ -66,19 +78,18 @@ var PurchaseUsers = sequelize.define('PurchaseUsers', {
  * Class methods definitions:
  */
 
-Purchase.belongsToMany(User, { through: PurchaseUsers, foreignKey: 'purchase_id', as: 'PurchaseUsers' });
-User.belongsToMany(Purchase, { through: PurchaseUsers, foreignKey: 'user_id', as: 'PurchaseUsers' });
+Purchase.belongsToMany(User, { through: PurchaseUsers, foreignKey: 'purchaseId', as: 'PurchaseUsers' });
+User.belongsToMany(Purchase, { through: PurchaseUsers, foreignKey: 'userId', as: 'PurchaseUsers' });
 
 // This association is required to find all purchases in specified room
 
-Purchase.hasMany(PurchaseUsers, { foreignKey: 'purchase_id', as: 'users' });
+Purchase.hasMany(PurchaseUsers, { foreignKey: 'purchaseId', as: 'users' });
 
 /**
  * Fields to return on selects. It's using by security methods.
  * For example, we don't need to return password or password_hash to clients.
  */
 
-PurchaseUsers.publicFields = ['id', 'user_id', 'purchase_id'];
-
+PurchaseUsers.publicFields = ['id', 'userId', 'purchaseId'];
 
 module.exports = PurchaseUsers;

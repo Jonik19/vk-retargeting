@@ -59,26 +59,26 @@ var RoomUsers = sequelize.define('RoomUsers', {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true
+  },
+  userId: {
+    type: Sequelize.INTEGER,
+    field: 'user_id',
+    allowNull: false,
+    validate: {}
+  },
+  roomId: {
+    type: Sequelize.STRING,
+    field: 'room_id',
+    allowNull: false,
+    validate: {}
   }
-  //user_id: {
-  //  type: Sequelize.INTEGER,
-  //  field: 'user_id',
-  //  allowNull: false,
-  //  validate: {}
-  //},
-  //room_id: {
-  //  type: Sequelize.STRING,
-  //  field: 'room_id',
-  //  allowNull: false,
-  //  validate: {}
-  //}
 }, options);
 
 /**
  * Class methods definitions:
  */
 
-Room.belongsToMany(User, { through: RoomUsers, foreignKey: 'room_id' });
-User.belongsToMany(Room, { through: RoomUsers, foreignKey: 'user_id' });
+Room.belongsToMany(User, { through: RoomUsers, foreignKey: 'userId' });
+User.belongsToMany(Room, { through: RoomUsers, foreignKey: 'roomId' });
 
 module.exports = RoomUsers;

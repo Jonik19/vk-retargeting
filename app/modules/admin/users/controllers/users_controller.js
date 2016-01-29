@@ -20,14 +20,14 @@ var controller = {};
 
 controller.byRoom = function *(next) {
   let data = {
-    room_id: this.params.roomId,
-    user_id: this.state.user.id
+    roomId: this.params.roomId,
+    userId: this.state.user.id
   };
 
   // Check user existing in this room
   yield UserRepo.assertUserInRoom(data);
 
-  let users = yield UserRepo.getUsersByRoomId(data.room_id);
+  let users = yield UserRepo.getUsersByRoomId(data.roomId);
 
   response.items(this, users);
 };

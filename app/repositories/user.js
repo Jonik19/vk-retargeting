@@ -70,7 +70,7 @@ UserRepo.checkCredentials = function (options) {
   return UserDomain.findOne({
     where: {
       username: options.username,
-      password_hash: UserDomain.hashPassword(options.password, config.authentication.secrets.password)
+      passwordHash: UserDomain.hashPassword(options.password, config.authentication.secrets.password)
     },
     attributes: UserDomain.publicFields
   })
@@ -93,8 +93,8 @@ UserRepo.checkCredentials = function (options) {
 UserRepo.assertUserInRoom = function (options) {
   options = options || {};
 
-  return RoomDomain.build({id: options.room_id}).getUsers({
-    where: {id: options.user_id},
+  return RoomDomain.build({id: options.roomId}).getUsers({
+    where: {id: options.userId},
     attributes: UserDomain.publicFields
   })
     .then(function (users) {

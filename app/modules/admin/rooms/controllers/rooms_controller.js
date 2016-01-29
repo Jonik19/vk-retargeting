@@ -34,14 +34,14 @@ controller.index = function *(next) {
 
 controller.show = function *(next) {
   let data = {
-    room_id: this.params.id,
-    user_id: this.state.user.id
+    roomId: this.params.id,
+    userId: this.state.user.id
   };
 
   // Check user existing in this room
   yield UserRepo.assertUserInRoom(data);
 
-  let room = yield RoomRepo.getById(data.room_id);
+  let room = yield RoomRepo.getById(data.roomId);
 
   response.success(this, room);
 };
@@ -55,7 +55,7 @@ controller.show = function *(next) {
 controller.create = function *(next) {
   let data = {
     name: this.request.body.name,
-    user_id: this.state.user.id
+    userId: this.state.user.id
   };
 
   let room = yield RoomRepo.createAndEnter(data);
@@ -71,8 +71,8 @@ controller.create = function *(next) {
 
 controller.enter = function *(next) {
   let data = {
-    room_id: this.request.body.id,
-    user_id: this.state.user.id
+    roomId: this.request.body.id,
+    userId: this.state.user.id
   };
 
   let success = yield RoomRepo.enter(data);

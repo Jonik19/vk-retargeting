@@ -52,13 +52,13 @@ options.indexes = [
  */
 
 var Purchase = sequelize.define('Purchase', {
-  owner_id: {
+  ownerId: {
     type: Sequelize.INTEGER,
     field: 'owner_id',
     allowNull: false,
     validate: {}
   },
-  room_id: {
+  roomId: {
     type: Sequelize.INTEGER,
     field: 'room_id',
     allowNull: false,
@@ -80,7 +80,7 @@ var Purchase = sequelize.define('Purchase', {
       min: 0
     }
   },
-  amount_per_user: {
+  amountPerUser: {
     type: Sequelize.INTEGER,
     field: 'amount_per_user',
     allowNull: false,
@@ -95,7 +95,7 @@ var Purchase = sequelize.define('Purchase', {
  * For example, we don't need to return password or password_hash to clients.
  */
 
-Purchase.publicFields = ['id', 'name', 'owner_id', 'room_id', 'amount', 'amount_per_user', 'createdAt', 'updatedAt'];
+Purchase.publicFields = ['id', 'name', 'ownerId', 'roomId', 'amount', 'amountPerUser', 'createdAt', 'updatedAt'];
 
 /**
  * Class methods definitions:

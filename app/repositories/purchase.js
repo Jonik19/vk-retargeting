@@ -35,11 +35,11 @@ PurchaseRepo.create = function (data) {
   data = data || {};
 
   _.assign(data, {
-    owner_id: data.owner_id,
-    room_id: data.room_id,
+    ownerId: data.ownerId,
+    roomId: data.roomId,
     name: data.name,
     amount: data.amount,
-    amount_per_user: getAmountPerUser(data.amount, data.users)
+    amountPerUser: getAmountPerUser(data.amount, data.users)
   });
 
   return PurchaseDomain.create(data)
@@ -72,13 +72,13 @@ PurchaseRepo.findById = function () {
  * @returns {Promise.<T>|*}
  */
 
-let selectablePurchaseUsersFields = ['user_id'];
+let selectablePurchaseUsersFields = ['userId'];
 
 PurchaseRepo.getPurchasesByRoomId = function (roomId) {
   // TODO: move constants in config
 
   return PurchaseDomain.findAll({
-    where: {room_id: roomId},
+    where: {roomId: roomId},
     include: [{model: PurchaseUsers, attributes: selectablePurchaseUsersFields, as: 'users'}],
     attributes:  PurchaseDomain.publicFields
   })
