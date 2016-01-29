@@ -3,10 +3,10 @@
 var path = require('path');
 var fs = require('fs');
 
-var config = require('config');
+var config = require('../../config');
 
 var Sequelize = require('sequelize');
-var sequelize = require('database');
+var sequelize = require('../../config/database');
 
 var models = composeModels(path.join(config.rootPath, 'app/models'), sequelize);
 
@@ -37,7 +37,7 @@ function composeModels(pathToModelsFolder, sequelizeInstance) {
     // don't import index.js file
 
     .filter(function(file) {
-      return (file.indexOf(".") !== 0) && (file !== "index.js");
+      return (file.indexOf('.') !== 0) && (file !== 'index.js');
     })
 
     // import model and add it to compose object
@@ -51,7 +51,7 @@ function composeModels(pathToModelsFolder, sequelizeInstance) {
   // Apply associations to every model
 
   Object.keys(models).forEach(function(modelName) {
-    if ("associate" in models[modelName]) {
+    if ('associate' in models[modelName]) {
       models[modelName].associate(models);
     }
   });

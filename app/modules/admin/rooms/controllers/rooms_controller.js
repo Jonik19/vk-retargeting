@@ -1,12 +1,9 @@
 'use strict';
 
-var config = require('config');
+var response = require('../../../../helpers/response');
 
-var response = require('helpers/response');
-var errors = require('modules/errors/services/errors');
-
-var UserRepo = require('repositories/user');
-var RoomRepo = require('repositories/room');
+var UserRepo = require('../../../../repositories/user');
+var RoomRepo = require('../../../../repositories/room');
 
 /**
  * Methods definition:
@@ -20,7 +17,7 @@ var controller = {};
  * @param next
  */
 
-controller.index = function *(next) {
+controller.index = function *() {
   let rooms = yield RoomRepo.getRooms(this.state.user.id);
 
   response.items(this, rooms);
@@ -32,7 +29,7 @@ controller.index = function *(next) {
  * @param next
  */
 
-controller.show = function *(next) {
+controller.show = function *() {
   let data = {
     roomId: this.params.id,
     userId: this.state.user.id
@@ -52,7 +49,7 @@ controller.show = function *(next) {
  * @param next
  */
 
-controller.create = function *(next) {
+controller.create = function *() {
   let data = {
     name: this.request.body.name,
     userId: this.state.user.id
@@ -69,7 +66,7 @@ controller.create = function *(next) {
  * @param next
  */
 
-controller.enter = function *(next) {
+controller.enter = function *() {
   let data = {
     roomId: this.request.body.id,
     userId: this.state.user.id

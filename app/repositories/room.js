@@ -1,10 +1,8 @@
 'use strict';
 
-var config = require('config');
+var errors = require('../modules/errors/services/errors');
 
-var errors = require('modules/errors/services/errors');
-
-var Repository = require('helpers/repository');
+var Repository = require('../helpers/repository');
 var models = require('../models');
 
 var UserDomain = models.User;
@@ -94,12 +92,13 @@ RoomRepo.enter = function (options) {
 RoomRepo.enterByModel = function (options) {
   options = options || {};
 
-  return options.model.addUser(options.userId).then(function (inserted) {
-        // if nothing is added throw an error. It means that current user is already in this room
-        if(0 === inserted.length) throw new errors.AlreadyInRoomError();
+  return options.model.addUser(options.userId)
+    .then(function (inserted) {
+      // if nothing is added throw an error. It means that current user is already in this room
+      if(0 === inserted.length) throw new errors.AlreadyInRoomError();
 
-        return Repository.pickPublic(options.model, RoomDomain.publicFields);
-      });
+      return Repository.pickPublic(options.model, RoomDomain.publicFields);
+    });
 };
 
 /**

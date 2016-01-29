@@ -1,7 +1,7 @@
 'use strict';
 
 var crypto = require('crypto');
-var config = require('config');
+var config = require('../../config');
 
 /**
  * Model options:
@@ -125,6 +125,6 @@ function hashPassword(password, salt) {
  * @param models
  */
 
-function associate(models) {
+function associate() {
 
 }

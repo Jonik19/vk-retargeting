@@ -2,10 +2,9 @@
 
 var _ = require('lodash');
 
-var config = require('config');
-var errors = require('modules/errors/services/errors');
+var errors = require('../modules/errors/services/errors');
 
-var Repository = require('helpers/repository');
+var Repository = require('../helpers/repository');
 var models = require('../models');
 
 var PurchaseDomain = models.Purchase;
@@ -45,7 +44,8 @@ PurchaseRepo.create = function (data) {
       // TODO: Check for each user existing in the room.
 
       return purchase.addPurchaseUsers(data.users)
-        .then(function (purchaseUsers) {
+        // it gets 'purchaseUsers' array in the callback
+        .then(function () {
           return purchase;
         });
     });

@@ -1,7 +1,6 @@
 'use strict';
 
-var config = require('config');
-var response = require('helpers/response');
+var response = require('../../../helpers/response');
 var handlers = require('../services/handlers');
 
 var controller = {};

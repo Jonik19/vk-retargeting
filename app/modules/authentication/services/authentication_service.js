@@ -1,6 +1,6 @@
 'use strict';
 
-var config = require('config');
+var config = require('../../../../config');
 var jwt = require('koa-jwt');
 
 var service = {};

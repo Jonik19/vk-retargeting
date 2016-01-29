@@ -1,13 +1,9 @@
 'use strict';
 
-var config = require('config');
+var response = require('../../../../helpers/response');
 
-var response = require('helpers/response');
-var errors = require('modules/errors/services/errors');
-
-var PurchaseRepo = require('repositories/purchase');
-var UserRepo = require('repositories/user');
-
+var PurchaseRepo = require('../../../../repositories/purchase');
+var UserRepo = require('../../../../repositories/user');
 
 /**
  * Methods definition:
@@ -21,7 +17,7 @@ var controller = {};
  * @param next
  */
 
-controller.index = function *(next) {
+controller.index = function *() {
 
   let data = {
     roomId: this.params.roomId,
@@ -42,7 +38,7 @@ controller.index = function *(next) {
  * @param next
  */
 
-controller.create = function *(next) {
+controller.create = function *() {
   let data = {
     ownerId: this.state.user.id, // id of user which makes this purchase
     roomId: this.params.roomId, // id of the room to insert this purchase

@@ -1,7 +1,5 @@
 'use strict';
 
-var config = require('config');
-
 /**
  * Model options:
  */

@@ -1,7 +1,5 @@
 'use strict';
 
-var config = require('config');
-
 /**
  * Model options:
  */
@@ -115,6 +113,6 @@ module.exports = function (sequelize, DataTypes) {
  * @param models
  */
 
-function associate(models) {
+function associate() {
 
 }

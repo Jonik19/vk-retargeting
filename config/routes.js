@@ -1,6 +1,5 @@
 'use strict';
 
-var jwt = require('koa-jwt');
 var mount = require('koa-mount');
 var compose = require('koa-compose');
 var bodyParser = require('koa-bodyparser');
@@ -12,7 +11,7 @@ function init(app) {
    * Errors handling
    */
 
-  var errorsController = require('modules/errors/controllers/errors_controller');
+  var errorsController = require('../app/modules/errors/controllers/errors_controller');
 
   app.use(errorsController.catchAll);
 
@@ -20,7 +19,7 @@ function init(app) {
    * CORS
    */
 
-  var corsController = require('modules/cors/controllers/cors_controller');
+  var corsController = require('../app/modules/cors/controllers/cors_controller');
 
   app.use(corsController.setAllowedHeaders);
 
@@ -38,7 +37,7 @@ function init(app) {
    * Routes: Authentication
    */
 
-  var authenticationController = require('modules/authentication/controllers/authentication_controller');
+  var authenticationController = require('../app/modules/authentication/controllers/authentication_controller');
 
 //router.post('/sign-out', compose([authenticationController.onlyAuthenticated, authenticationController.signOut]));
   router.post('/sign-up', compose([authenticationController.onlyNotAuthenticated, authenticationController.signUp]));
@@ -49,7 +48,7 @@ function init(app) {
    * Routes: Users
    */
 
-  var usersController = require('modules/admin/users/controllers/users_controller');
+  var usersController = require('../app/modules/admin/users/controllers/users_controller');
 
   router.use(mount('/users', authenticationController.onlyAuthenticated));
   router.get('/users/by_room/:roomId', usersController.byRoom);
@@ -58,7 +57,7 @@ function init(app) {
    * Routes: Rooms
    */
 
-  var roomsController = require('modules/admin/rooms/controllers/rooms_controller');
+  var roomsController = require('../app/modules/admin/rooms/controllers/rooms_controller');
 
   router.use(mount('/rooms', authenticationController.onlyAuthenticated));
   router.get('/rooms', roomsController.index);
@@ -70,7 +69,7 @@ function init(app) {
    * Routes: Purchases
    */
 
-  var purchasesController = require('modules/admin/purchases/controllers/purchases_controller');
+  var purchasesController = require('../app/modules/admin/purchases/controllers/purchases_controller');
 
   router.use(mount('/rooms/purchases', authenticationController.onlyAuthenticated));
   router.get('/rooms/:roomId/purchases', purchasesController.index);

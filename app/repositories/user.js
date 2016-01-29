@@ -1,10 +1,10 @@
 'use strict';
 
-var config = require('config');
+var config = require('../../config');
 
-var errors = require('modules/errors/services/errors');
+var errors = require('../modules/errors/services/errors');
 
-var Repository = require('helpers/repository');
+var Repository = require('../helpers/repository');
 var models = require('../models');
 
 var UserDomain = models.User;

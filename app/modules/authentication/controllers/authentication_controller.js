@@ -1,11 +1,12 @@
 'use strict';
 
-var config = require('config');
 var jwt = require('koa-jwt');
 
-var response = require('helpers/response');
-var UserRepo = require('repositories/user');
-var errors = require('modules/errors/services/errors');
+var config = require('../../../../config');
+
+var response = require('../../../helpers/response');
+var UserRepo = require('../../../repositories/user');
+var errors = require('../../errors/services/errors');
 
 var authService = require('../services/authentication_service');
 
@@ -53,7 +54,7 @@ controller.onlyNotAuthenticated = function *(next) {
  * @param next Next middlware function or empty function
  */
 
-controller.signIn = function *(next) {
+controller.signIn = function *() {
   var data = {
     username: this.request.body.username,
     password: this.request.body.password
@@ -76,7 +77,7 @@ controller.signIn = function *(next) {
  * @param next Next middlware function or empty function
  */
 
-controller.signUp = function *(next) {
+controller.signUp = function *() {
   var data = {
     username: this.request.body.username,
     name: this.request.body.name,
@@ -94,7 +95,7 @@ controller.signUp = function *(next) {
  * @param next
  */
 
-controller.check = function *(next) {
+controller.check = function *() {
   var user = yield UserRepo.findById(this.state.user.id);
 
   response.success(this, authService.generateUserResponse(user, authService.sign(user)));

@@ -1,10 +1,8 @@
 'use strict';
 
-var config = require('config');
+var response = require('../../../../helpers/response');
 
-var response = require('helpers/response');
-
-var UserRepo = require('repositories/user');
+var UserRepo = require('../../../../repositories/user');
 
 /**
  * Methods definition:
@@ -18,7 +16,7 @@ var controller = {};
  * @param next
  */
 
-controller.byRoom = function *(next) {
+controller.byRoom = function *() {
   let data = {
     roomId: this.params.roomId,
     userId: this.state.user.id
