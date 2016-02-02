@@ -84,6 +84,7 @@ function init(app) {
   router.use(mount('/rooms/purchases', authenticationController.onlyAuthenticated));
   router.get('/rooms/:roomId/purchases', purchasesController.index);
   router.post('/rooms/:roomId/purchases', purchasesController.create);
+  router.get('/rooms/:roomId/purchases/credits', purchasesController.creditsByRoom);
 
   /**
    * Return instance of router. Don't delete it.

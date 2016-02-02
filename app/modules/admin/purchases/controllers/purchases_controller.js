@@ -33,6 +33,27 @@ controller.index = function *() {
 };
 
 /**
+ * Returns users credits in specified room.
+ *
+ * @param next
+ */
+
+controller.creditsByRoom = function *() {
+
+  let data = {
+    roomId: this.params.roomId,
+    userId: this.state.user.id
+  };
+
+  // Check user existing in this room
+  yield UserRepo.assertUserInRoom(data);
+
+  let credits = yield PurchaseRepo.getCreditsByRoomId(data.roomId);
+
+  response.items(this, credits);
+};
+
+/**
  * Creates purchase.
  *
  * @param next

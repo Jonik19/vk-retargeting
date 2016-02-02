@@ -9,6 +9,7 @@ var models = require('../models');
 
 var PurchaseDomain = models.Purchase;
 var PurchaseUsers = models.PurchaseUsers;
+var RoomUsers = models.RoomUsers;
 
 /**
  * Model definition:
@@ -62,6 +63,27 @@ PurchaseRepo.findById = function () {
     });
 };
 
+/**
+ * Finds room by id.
+ */
+
+PurchaseRepo.getCreditsByRoomId = function (roomId) {
+  return PurchaseUsers.findAll({
+    attributes: ['userId'],
+    include: [
+      {
+        model: PurchaseDomain,
+        where: {roomId: roomId},
+        attributes: [[models.sequelize.fn('SUM', models.sequelize.col('amount_per_user')), 'credit']],
+        as: 'purchase'
+      }
+    ],
+    group: 'user_id'
+  })
+    .then(function (credits) {
+      return credits;
+    });
+};
 
 /**
  * Finds all purchases in specified room.

@@ -33,6 +33,7 @@ options.classMethods.associate = function (models) {
 // This association is required to find all purchases in specified room
 
   models.Purchase.hasMany(models.PurchaseUsers, { foreignKey: 'purchaseId', as: 'users' });
+  models.PurchaseUsers.belongsTo(models.Purchase, { as: 'purchase' });
 };
 
 /**
