@@ -96,6 +96,7 @@ PurchaseRepo.getPurchasesByRoomId = function (roomId) {
  */
 
 function getAmountPerUser(amount, users) {
+  //TODO: use try catch
   if(Array.isArray(users) && users.length > 0) {
     return amount/users.length;
   }

@@ -18,8 +18,16 @@ options.tableName = 'purchases';
  * User.someIndependentMethod()
  */
 
-options.classMethods = {
-  associate: associate
+options.classMethods = {};
+
+/**
+ * Method for sequelize to associate models
+ *
+ * @param models
+ */
+
+options.classMethods.associate = function () {
+
 };
 
 /**
@@ -101,18 +109,3 @@ module.exports = function (sequelize, DataTypes) {
 
   return Purchase;
 };
-
-/**
- * Class methods definitions:
- */
-
-
-/**
- * Method for sequelize to associate models
- *
- * @param models
- */
-
-function associate() {
-
-}

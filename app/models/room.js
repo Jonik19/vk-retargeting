@@ -18,9 +18,18 @@ options.tableName = 'rooms';
  * User.someIndependentMethod()
  */
 
-options.classMethods = {
-  associate: associate
+options.classMethods = {};
+
+/**
+ * Method for sequelize to associate models
+ *
+ * @param models
+ */
+
+options.classMethods.associate = function (models) {
+  models.Room.hasMany(models.Purchase, { foreignKey: 'roomId' });
 };
+
 
 /**
  * Methods of the model's instance. Example:
@@ -74,19 +83,3 @@ module.exports = function (sequelize, DataTypes) {
 
   return Room;
 };
-
-
-/**
- * Class methods definitions:
- */
-
-
-/**
- * Method for sequelize to associate models
- *
- * @param models
- */
-
-function associate(models) {
-  models.Room.hasMany(models.Purchase, { foreignKey: 'roomId' });
-}

@@ -21,9 +21,29 @@ options.tableName = 'users';
  * User.someIndependentMethod()
  */
 
-options.classMethods = {
-  hashPassword: hashPassword,
-  associate: associate
+options.classMethods = {};
+
+/**
+ * Method for sequelize to associate models
+ *
+ * @param models
+ */
+
+options.classMethods.associate = function () {
+
+};
+
+/**
+ * Returns hash of password and secret in md5 format.
+ *
+ * @param {String} password
+ * @param {String} salt
+ * @returns {String}
+ */
+
+options.classMethods.hashPassword = function hashPassword(password, salt) {
+  return crypto.createHmac('sha256', salt)
+    .update(password).digest('hex');
 };
 
 /**
@@ -95,36 +115,3 @@ module.exports = function (sequelize, DataTypes) {
 
   return User;
 };
-
-/**
- * Helpers:
- */
-
-/**
- * Returns hash of password and secret in md5 format.
- *
- * @param {String} password
- * @param {String} salt
- * @returns {String}
- */
-
-function hashPassword(password, salt) {
-  return crypto.createHmac('sha256', salt)
-    .update(password).digest('hex');
-}
-
-
-/**
- * Class methods definitions:
- */
-
-
-/**
- * Method for sequelize to associate models
- *
- * @param models
- */
-
-function associate() {
-
-}

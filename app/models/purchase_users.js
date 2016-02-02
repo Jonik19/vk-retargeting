@@ -18,8 +18,21 @@ options.tableName = 'purchase_users';
  * User.someIndependentMethod()
  */
 
-options.classMethods = {
-  associate: associate
+options.classMethods = {};
+
+/**
+ * Method for sequelize to associate models
+ *
+ * @param models
+ */
+
+options.classMethods.associate = function (models) {
+  models.Purchase.belongsToMany(models.User, { through: models.PurchaseUsers, foreignKey: 'purchaseId', as: 'PurchaseUsers' });
+  models.User.belongsToMany(models.Purchase, { through: models.PurchaseUsers, foreignKey: 'userId', as: 'PurchaseUsers' });
+
+// This association is required to find all purchases in specified room
+
+  models.Purchase.hasMany(models.PurchaseUsers, { foreignKey: 'purchaseId', as: 'users' });
 };
 
 /**
@@ -76,23 +89,3 @@ module.exports = function (sequelize, DataTypes) {
 
   return PurchaseUsers;
 };
-
-/**
- * Class methods definitions:
- */
-
-
-/**
- * Method for sequelize to associate models
- *
- * @param models
- */
-
-function associate(models) {
-  models.Purchase.belongsToMany(models.User, { through: models.PurchaseUsers, foreignKey: 'purchaseId', as: 'PurchaseUsers' });
-  models.User.belongsToMany(models.Purchase, { through: models.PurchaseUsers, foreignKey: 'userId', as: 'PurchaseUsers' });
-
-// This association is required to find all purchases in specified room
-
-  models.Purchase.hasMany(models.PurchaseUsers, { foreignKey: 'purchaseId', as: 'users' });
-}

@@ -12,15 +12,26 @@ var options = {};
 
 options.tableName = 'room_users';
 
+
 /**
  * Methods of the model's class. Example:
  * ...
  * User.someIndependentMethod()
  */
 
-options.classMethods = {
-  associate: associate
+options.classMethods = {};
+
+/**
+ * Method for sequelize to associate models
+ *
+ * @param models
+ */
+
+options.classMethods.associate = function (models) {
+  models.Room.belongsToMany(models.User, { through: models.RoomUsers, foreignKey: 'userId' });
+  models.User.belongsToMany(models.Room, { through: models.RoomUsers, foreignKey: 'roomId' });
 };
+
 
 /**
  * Methods of the model's instance. Example:
@@ -71,19 +82,3 @@ module.exports = function (sequelize, DataTypes) {
 
   return RoomUsers;
 };
-
-/**
- * Class methods definitions:
- */
-
-
-/**
- * Method for sequelize to associate models
- *
- * @param models
- */
-
-function associate(models) {
-  models.Room.belongsToMany(models.User, { through: models.RoomUsers, foreignKey: 'userId' });
-  models.User.belongsToMany(models.Room, { through: models.RoomUsers, foreignKey: 'roomId' });
-}
