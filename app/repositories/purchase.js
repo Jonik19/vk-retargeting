@@ -1,17 +1,15 @@
 'use strict';
 
-var config = require('config');
 var _ = require('lodash');
 
-var Repository = require('helpers/repository');
-var sequelize = require('database');
+var errors = require('../modules/errors/services/errors');
 
-var UserDomain = require('domains/user');
-var PurchaseDomain = require('domains/purchase');
-var RoomDomain = require('domains/room');
-var PurchaseUsers = require('domains/purchase_users');
+var Repository = require('../helpers/repository');
+var models = require('../models');
 
-var errors = require('modules/errors/services/errors');
+var PurchaseDomain = models.Purchase;
+var PurchaseUsers = models.PurchaseUsers;
+var RoomUsers = models.RoomUsers;
 
 /**
  * Model definition:
@@ -35,11 +33,11 @@ PurchaseRepo.create = function (data) {
   data = data || {};
 
   _.assign(data, {
-    owner_id: data.owner_id,
-    room_id: data.room_id,
+    ownerId: data.ownerId,
+    roomId: data.roomId,
     name: data.name,
     amount: data.amount,
-    amount_per_user: getAmountPerUser(data.amount, data.users)
+    amountPerUser: getAmountPerUser(data.amount, data.users)
   });
 
   return PurchaseDomain.create(data)
@@ -47,7 +45,8 @@ PurchaseRepo.create = function (data) {
       // TODO: Check for each user existing in the room.
 
       return purchase.addPurchaseUsers(data.users)
-        .then(function (purchaseUsers) {
+        // it gets 'purchaseUsers' array in the callback
+        .then(function () {
           return purchase;
         });
     });
@@ -64,6 +63,27 @@ PurchaseRepo.findById = function () {
     });
 };
 
+/**
+ * Finds room by id.
+ */
+
+PurchaseRepo.getCreditsByRoomId = function (roomId) {
+  return PurchaseUsers.findAll({
+    attributes: ['userId'],
+    include: [
+      {
+        model: PurchaseDomain,
+        where: {roomId: roomId},
+        attributes: [[models.sequelize.fn('SUM', models.sequelize.col('amount_per_user')), 'credit']],
+        as: 'purchase'
+      }
+    ],
+    group: 'user_id'
+  })
+    .then(function (credits) {
+      return credits;
+    });
+};
 
 /**
  * Finds all purchases in specified room.
@@ -72,13 +92,13 @@ PurchaseRepo.findById = function () {
  * @returns {Promise.<T>|*}
  */
 
-let selectablePurchaseUsersFields = ['user_id'];
+let selectablePurchaseUsersFields = ['userId'];
 
 PurchaseRepo.getPurchasesByRoomId = function (roomId) {
   // TODO: move constants in config
 
   return PurchaseDomain.findAll({
-    where: {room_id: roomId},
+    where: {roomId: roomId},
     include: [{model: PurchaseUsers, attributes: selectablePurchaseUsersFields, as: 'users'}],
     attributes:  PurchaseDomain.publicFields
   })
@@ -98,6 +118,7 @@ PurchaseRepo.getPurchasesByRoomId = function (roomId) {
  */
 
 function getAmountPerUser(amount, users) {
+  //TODO: use try catch
   if(Array.isArray(users) && users.length > 0) {
     return amount/users.length;
   }

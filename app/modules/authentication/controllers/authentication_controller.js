@@ -1,11 +1,14 @@
 'use strict';
 
-var config = require('config');
 var jwt = require('koa-jwt');
 
-var Response = require('helpers/response');
-var UserRepo = require('repositories/user');
-var errors = require('modules/errors/services/errors');
+var config = require('../../../../config');
+
+var response = require('../../../helpers/response');
+var UserRepo = require('../../../repositories/user');
+var errors = require('../../errors/services/errors');
+
+var authService = require('../services/authentication_service');
 
 /**
  * Methods definition:
@@ -29,7 +32,7 @@ controller.onlyAuthenticated = jwt({ secret: config.authentication.secrets.sign 
  */
 
 controller.onlyNotAuthenticated = function *(next) {
-  var token = getTokenFromHeader(this.header.authorization);
+  var token = authService.getTokenFromHeader(this.header.authorization);
 
   try {
     jwt.verify(token, config.authentication.secrets.sign);
@@ -51,10 +54,10 @@ controller.onlyNotAuthenticated = function *(next) {
  * @param next Next middlware function or empty function
  */
 
-controller.signIn = function *(next) {
+controller.signIn = function *() {
   var data = {
     username: this.request.body.username,
-    password: this.request.body.password
+    password: this.request.body.password || ''
   };
 
   var user = yield UserRepo.checkCredentials(data);
@@ -63,8 +66,7 @@ controller.signIn = function *(next) {
     throw new errors.IncorrectDataError();
   }
 
-  var response = new Response(this, generateUserResponse(user, sign(user)));
-  response.success();
+  response.success(this, authService.generateUserResponse(user, authService.sign(user)));
 };
 
 /**
@@ -75,17 +77,16 @@ controller.signIn = function *(next) {
  * @param next Next middlware function or empty function
  */
 
-controller.signUp = function *(next) {
+controller.signUp = function *() {
   var data = {
     username: this.request.body.username,
     name: this.request.body.name,
-    password: this.request.body.password
+    password: this.request.body.password || ''
   };
 
   var user = yield UserRepo.create(data);
 
-  var response = new Response(this, generateUserResponse(user, sign(user)));
-  response.success();
+  response.success(this, authService.generateUserResponse(user, authService.sign(user)));
 };
 
 /**
@@ -94,60 +95,10 @@ controller.signUp = function *(next) {
  * @param next
  */
 
-controller.check = function *(next) {
+controller.check = function *() {
   var user = yield UserRepo.findById(this.state.user.id);
 
-  var response = new Response(this, generateUserResponse(user, sign(user)));
-  response.success();
+  response.success(this, authService.generateUserResponse(user, authService.sign(user)));
 };
-
-/**
- * Helper functions definitions:
- */
-
-/**
- * Signs passed user and returns authentication token.
- * You can use this token to pass authentication in future.
- *
- * @param user User object to encode
- * @returns {String} Token
- */
-
-function sign(user) {
-  return jwt.sign(user, config.authentication.secrets.sign, {
-    expiresInSeconds: config.authentication.tokenExpiration
-  });
-}
-
-/**
- * Generates common response for signUp, signIn and check methods.
- *
- * @param user User object from db
- * @param token JWT token
- * @returns {{user: *, token: *}}
- */
-
-function generateUserResponse(user, token) {
-  return {
-    user: user,
-    token: token
-  };
-}
-
-/**
- * Returns token from header format('Bearer token123456789')
- * to 'token123456789'.
- *
- * @param {String} header
- * @returns {String}
- */
-
-function getTokenFromHeader(header) {
-  if(!/^Bearer\s.+$/.test(header)) {
-    return null;
-  }
-
-  return header.replace('Bearer ', '');
-}
 
 module.exports = controller;

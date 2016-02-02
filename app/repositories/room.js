@@ -1,13 +1,12 @@
 'use strict';
 
-var config = require('config');
+var errors = require('../modules/errors/services/errors');
 
-var Repository = require('helpers/repository');
+var Repository = require('../helpers/repository');
+var models = require('../models');
 
-var UserDomain = require('domains/user');
-var RoomDomain = require('domains/room');
-
-var errors = require('modules/errors/services/errors');
+var UserDomain = models.User;
+var RoomDomain = models.Room;
 
 /**
  * Model definition:
@@ -72,11 +71,11 @@ RoomRepo.getRooms = function (userId) {
 RoomRepo.enter = function (options) {
   options = options || {};
 
-  return RoomDomain.findById(options.room_id)
+  return RoomDomain.findById(options.roomId)
     .then(function (room) {
       if(null === room) throw new errors.IncorrectDataError();
 
-      return RoomRepo.enterByModel({model: room, user_id: options.user_id});
+      return RoomRepo.enterByModel({model: room, userId: options.userId});
     });
 };
 
@@ -93,12 +92,13 @@ RoomRepo.enter = function (options) {
 RoomRepo.enterByModel = function (options) {
   options = options || {};
 
-  return options.model.addUser(options.user_id).then(function (inserted) {
-        // if nothing is added throw an error. It means that current user is already in this room
-        if(0 === inserted.length) throw new errors.AlreadyInRoomError();
+  return options.model.addUser(options.userId)
+    .then(function (inserted) {
+      // if nothing is added throw an error. It means that current user is already in this room
+      if(0 === inserted.length) throw new errors.AlreadyInRoomError();
 
-        return Repository.pickPublic(options.model, RoomDomain.publicFields);
-      });
+      return Repository.pickPublic(options.model, RoomDomain.publicFields);
+    });
 };
 
 /**
@@ -114,7 +114,7 @@ RoomRepo.createAndEnter = function (data) {
 
   return RoomDomain.create.call(RoomDomain, data).
     then(function (room) {
-      return RoomRepo.enterByModel({model: room, user_id: data.user_id});
+      return RoomRepo.enterByModel({model: room, userId: data.userId});
     });
 };
 

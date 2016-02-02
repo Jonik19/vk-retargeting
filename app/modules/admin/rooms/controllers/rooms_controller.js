@@ -1,12 +1,9 @@
 'use strict';
 
-var config = require('config');
+var response = require('../../../../helpers/response');
 
-var Response = require('helpers/response');
-var errors = require('modules/errors/services/errors');
-
-var UserRepo = require('repositories/user');
-var RoomRepo = require('repositories/room');
+var UserRepo = require('../../../../repositories/user');
+var RoomRepo = require('../../../../repositories/room');
 
 /**
  * Methods definition:
@@ -20,11 +17,10 @@ var controller = {};
  * @param next
  */
 
-controller.index = function *(next) {
+controller.index = function *() {
   let rooms = yield RoomRepo.getRooms(this.state.user.id);
 
-  let response = new Response(this, rooms);
-  response.items();
+  response.items(this, rooms);
 };
 
 /**
@@ -33,19 +29,18 @@ controller.index = function *(next) {
  * @param next
  */
 
-controller.show = function *(next) {
+controller.show = function *() {
   let data = {
-    room_id: this.params.id,
-    user_id: this.state.user.id
+    roomId: this.params.id,
+    userId: this.state.user.id
   };
 
   // Check user existing in this room
   yield UserRepo.assertUserInRoom(data);
 
-  let room = yield RoomRepo.getById(data.room_id);
+  let room = yield RoomRepo.getById(data.roomId);
 
-  let response = new Response(this, room);
-  response.success();
+  response.success(this, room);
 };
 
 /**
@@ -54,16 +49,15 @@ controller.show = function *(next) {
  * @param next
  */
 
-controller.create = function *(next) {
+controller.create = function *() {
   let data = {
     name: this.request.body.name,
-    user_id: this.state.user.id
+    userId: this.state.user.id
   };
 
   let room = yield RoomRepo.createAndEnter(data);
 
-  let response = new Response(this, room);
-  response.success();
+  response.success(this, room);
 };
 
 /**
@@ -72,16 +66,15 @@ controller.create = function *(next) {
  * @param next
  */
 
-controller.enter = function *(next) {
+controller.enter = function *() {
   let data = {
-    room_id: this.request.body.id,
-    user_id: this.state.user.id
+    roomId: this.request.body.id,
+    userId: this.state.user.id
   };
 
   let success = yield RoomRepo.enter(data);
 
-  let response = new Response(this, success);
-  response.success();
+  response.success(this, success);
 };
 
 module.exports = controller;

@@ -1,10 +1,8 @@
 'use strict';
 
-var config = require('config');
+var response = require('../../../../helpers/response');
 
-var Response = require('helpers/response');
-
-var UserRepo = require('repositories/user');
+var UserRepo = require('../../../../repositories/user');
 
 /**
  * Methods definition:
@@ -18,19 +16,18 @@ var controller = {};
  * @param next
  */
 
-controller.byRoom = function *(next) {
+controller.byRoom = function *() {
   let data = {
-    room_id: this.params.roomId,
-    user_id: this.state.user.id
+    roomId: this.params.roomId,
+    userId: this.state.user.id
   };
 
   // Check user existing in this room
   yield UserRepo.assertUserInRoom(data);
 
-  let users = yield UserRepo.getUsersByRoomId(data.room_id);
+  let users = yield UserRepo.getUsersByRoomId(data.roomId);
 
-  let response = new Response(this, users);
-  response.items();
+  response.items(this, users);
 };
 
 module.exports = controller;

@@ -1,13 +1,14 @@
 'use strict';
 
-var md5 = require('md5');
-var config = require('config');
-var errors = require('modules/errors/services/errors');
+var config = require('../../config');
 
-var Repository = require('helpers/repository');
+var errors = require('../modules/errors/services/errors');
 
-var UserDomain = require('domains/user');
-var RoomDomain = require('domains/room');
+var Repository = require('../helpers/repository');
+var models = require('../models');
+
+var UserDomain = models.User;
+var RoomDomain = models.Room;
 
 /**
  * Model definition:
@@ -70,7 +71,7 @@ UserRepo.checkCredentials = function (options) {
   return UserDomain.findOne({
     where: {
       username: options.username,
-      password_hash: UserDomain.hashPassword(options.password, config.authentication.secrets.password)
+      passwordHash: UserDomain.hashPassword(options.password, config.authentication.secrets.password)
     },
     attributes: UserDomain.publicFields
   })
@@ -93,8 +94,8 @@ UserRepo.checkCredentials = function (options) {
 UserRepo.assertUserInRoom = function (options) {
   options = options || {};
 
-  return RoomDomain.build({id: options.room_id}).getUsers({
-    where: {id: options.user_id},
+  return RoomDomain.build({id: options.roomId}).getUsers({
+    where: {id: options.userId},
     attributes: UserDomain.publicFields
   })
     .then(function (users) {

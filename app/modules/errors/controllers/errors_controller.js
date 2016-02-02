@@ -1,7 +1,6 @@
 'use strict';
 
-var config = require('config');
-var Response = require('helpers/response');
+var response = require('../../../helpers/response');
 var handlers = require('../services/handlers');
 
 var controller = {};
@@ -18,6 +17,7 @@ controller.catchAll = function *(next) {
   } catch(err) {
 
     console.log(err);
+    console.log(err.stack);
 
     return sendErrorResponse(this, err);
   }
@@ -63,8 +63,7 @@ function generateError(error) {
 function sendErrorResponse(ctx, err) {
   let generatedError = generateError(err);
 
-  var response = new Response(ctx, generatedError.response);
-  response.error(generatedError.status);
+  response.error(ctx, generatedError.response, generatedError.status);
 }
 
 

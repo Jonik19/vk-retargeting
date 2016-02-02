@@ -1,13 +1,9 @@
 'use strict';
 
-var config = require('config');
+var response = require('../../../../helpers/response');
 
-var Response = require('helpers/response');
-var errors = require('modules/errors/services/errors');
-
-var PurchaseRepo = require('repositories/purchase');
-var UserRepo = require('repositories/user');
-
+var PurchaseRepo = require('../../../../repositories/purchase');
+var UserRepo = require('../../../../repositories/user');
 
 /**
  * Methods definition:
@@ -21,20 +17,40 @@ var controller = {};
  * @param next
  */
 
-controller.index = function *(next) {
+controller.index = function *() {
 
   let data = {
-    room_id: this.params.roomId,
-    user_id: this.state.user.id
+    roomId: this.params.roomId,
+    userId: this.state.user.id
   };
 
   // Check user existing in this room
   yield UserRepo.assertUserInRoom(data);
 
-  let purchases = yield PurchaseRepo.getPurchasesByRoomId(data.room_id);
+  let purchases = yield PurchaseRepo.getPurchasesByRoomId(data.roomId);
 
-  let response = new Response(this, purchases);
-  response.items();
+  response.items(this, purchases);
+};
+
+/**
+ * Returns users credits in specified room.
+ *
+ * @param next
+ */
+
+controller.creditsByRoom = function *() {
+
+  let data = {
+    roomId: this.params.roomId,
+    userId: this.state.user.id
+  };
+
+  // Check user existing in this room
+  yield UserRepo.assertUserInRoom(data);
+
+  let credits = yield PurchaseRepo.getCreditsByRoomId(data.roomId);
+
+  response.items(this, credits);
 };
 
 /**
@@ -43,10 +59,10 @@ controller.index = function *(next) {
  * @param next
  */
 
-controller.create = function *(next) {
+controller.create = function *() {
   let data = {
-    owner_id: this.state.user.id, // id of user which makes this purchase
-    room_id: this.params.roomId, // id of the room to insert this purchase
+    ownerId: this.state.user.id, // id of user which makes this purchase
+    roomId: this.params.roomId, // id of the room to insert this purchase
     name: this.request.body.name, // name of the purchase
     amount: this.request.body.amount, // Full price of the purchase
     // TODO: users must be an array
@@ -55,14 +71,13 @@ controller.create = function *(next) {
 
   // Check user existing in this room
   yield UserRepo.assertUserInRoom({
-    user_id: data.owner_id,
-    room_id: data.room_id
+    userId: data.ownerId,
+    roomId: data.roomId
   });
 
   let purchase = yield PurchaseRepo.create(data);
 
-  let response = new Response(this, purchase);
-  response.success();
+  response.success(this, purchase);
 };
 
 module.exports = controller;

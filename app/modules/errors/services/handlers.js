@@ -86,7 +86,7 @@ handlers['AlreadyInRoomError'] = function (error) {
   };
 };
 
-handlers['UnhandledError'] = function (error) {
+handlers['UnhandledError'] = function () {
   return {
     response: {
       name: 'UnhandledError',

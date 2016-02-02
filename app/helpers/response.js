@@ -1,32 +1,23 @@
 'use strict';
 
-/**
- * Response constructor
- *
- * @param ctx Context of route (this === ctx)
- * @param data Data to send to client
- * @constructor
- */
-
-function Response(ctx, data) {
-  this.ctx = ctx;
-  this.data = data;
-}
+var response = {};
 
 /**
  * Sends successful(you can change status) response to client
  * with 'success' format of response.
  * Use it when you need to send any kind of data
  *
+ * @param {Object} ctx Context of koa
+ * @param {Number} data Data to return to client
  * @param {Number} status HTTP status to send to client
  */
 
-Response.prototype.success = function (status) {
-  this.ctx.body = {
-    response: this.data
+response.success = function (ctx, data, status) {
+  ctx.body = {
+    response: data
   };
 
-  this.ctx.status = status|| 200;
+  ctx.status = status|| 200;
 };
 
 /**
@@ -34,15 +25,17 @@ Response.prototype.success = function (status) {
  * with 'success-items' format of response.
  * Use it when you need to send list of data: array
  *
+ * @param {Object} ctx Context of koa
+ * @param {Number} data Data to return to client
  * @param {Number} status HTTP status to send to client
  */
 
-Response.prototype.items = function (status) {
-  this.data = {
-    items: this.data || []
+response.items = function (ctx, data, status) {
+  ctx.data = {
+    items: data || []
   };
 
-  this.success(status);
+  this.success(ctx, ctx.data, status);
 };
 
 /**
@@ -50,16 +43,18 @@ Response.prototype.items = function (status) {
  * with 'error' format of response.
  * Use it when you need to send an error
  *
+ * @param {Object} ctx Context of koa
+ * @param {Number} data Data to return to client
  * @param {Number} status HTTP status to send to client
  */
 
-Response.prototype.error = function (status) {
-  this.ctx.body = {
-    error: this.data
+response.error = function (ctx, data, status) {
+  ctx.body = {
+    error: data
   };
 
-  this.ctx.status = status || 500;
+  ctx.status = status || 500;
 };
 
 
-module.exports = Response;
+module.exports = response;
