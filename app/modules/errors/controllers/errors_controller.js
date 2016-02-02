@@ -17,6 +17,7 @@ controller.catchAll = function *(next) {
   } catch(err) {
 
     console.log(err);
+    console.log(err.stack);
 
     return sendErrorResponse(this, err);
   }

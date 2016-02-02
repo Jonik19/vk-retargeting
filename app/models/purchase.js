@@ -75,7 +75,7 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
     amount: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(14, 2),
       field: 'amount',
       allowNull: false,
       validate: {
@@ -83,7 +83,7 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
     amountPerUser: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(14, 2),
       field: 'amount_per_user',
       allowNull: false,
       validate: {

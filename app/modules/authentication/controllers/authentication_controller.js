@@ -57,7 +57,7 @@ controller.onlyNotAuthenticated = function *(next) {
 controller.signIn = function *() {
   var data = {
     username: this.request.body.username,
-    password: this.request.body.password
+    password: this.request.body.password || ''
   };
 
   var user = yield UserRepo.checkCredentials(data);
@@ -81,7 +81,7 @@ controller.signUp = function *() {
   var data = {
     username: this.request.body.username,
     name: this.request.body.name,
-    password: this.request.body.password
+    password: this.request.body.password || ''
   };
 
   var user = yield UserRepo.create(data);
