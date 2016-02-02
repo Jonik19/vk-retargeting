@@ -13,7 +13,8 @@ module.exports = {
   cors: {
     maxAge: 60 * 60 * 24 * 7, // one week,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'UPDATE'],
-    headers: ['Accept', 'Content-type', 'Authorization']
+    headers: ['Accept', 'Content-type', 'Authorization'],
+    origin: true
   },
   authentication: {
     //tokenExpiration: 20, // one week

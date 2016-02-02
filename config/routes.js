@@ -1,6 +1,9 @@
 'use strict';
 
+var config = require('../config');
+
 var mount = require('koa-mount');
+var cors = require('koa-cors');
 var compose = require('koa-compose');
 var bodyParser = require('koa-bodyparser');
 
@@ -16,15 +19,22 @@ function init(app) {
   app.use(errorsController.catchAll);
 
   /**
-   * CORS
+   * Helper middlewares:
    */
 
-  var corsController = require('../app/modules/cors/controllers/cors_controller');
+  /**
+   * CORS middleware
+   */
 
-  app.use(corsController.setAllowedHeaders);
+  app.use(cors({
+    maxAge: config.cors.maxAge,
+    methods: config.cors.methods,
+    headers: config.cors.headers,
+    origin: config.cors.origin
+  }));
 
   /**
-   * Helper middlewares
+   * Parses requested body to req.body field
    */
 
   router.use(bodyParser());
