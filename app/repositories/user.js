@@ -4,7 +4,7 @@ var config = require('../../config');
 
 var errors = require('../modules/errors/services/errors');
 
-var Repository = require('../helpers/repository');
+var repository = require('../helpers/repository');
 var models = require('../models');
 
 var UserDomain = models.User;
@@ -14,9 +14,7 @@ var RoomDomain = models.Room;
  * Model definition:
  */
 
-var UserRepo = function () {
-
-};
+var repo = {};
 
 /**
  * Class methods definitions:
@@ -26,10 +24,10 @@ var UserRepo = function () {
  * Creates model and returns it.
  */
 
-UserRepo.create = function () {
-  return UserDomain.create.apply(UserDomain, arguments)
+repo.create = function (data) {
+  return UserDomain.create(data)
     .then(function (user) {
-      return Repository.pickPublic(user, UserDomain.publicFields);
+      return repository.pickPublic(user, UserDomain.publicFields);
     });
 };
 
@@ -37,24 +35,16 @@ UserRepo.create = function () {
  * Finds user by id.
  */
 
-UserRepo.findById = function () {
-  return UserDomain.findById.apply(UserDomain, arguments)
-    .then(function (user) {
-      return Repository.pickPublic(user, UserDomain.publicFields);
-    });
+repo.findById = function (id) {
+  return UserDomain.findById(id, { attributes: UserDomain.publicFields });
 };
 
 /**
  * Get room users.
  */
 
-UserRepo.getUsersByRoomId = function (roomId) {
-  return RoomDomain.build({id: roomId}).getUsers({ attributes: UserDomain.publicFields})
-    .then(function (users) {
-      return users.map(function (user) {
-        return Repository.pickPublic(user, UserDomain.publicFields);
-      });
-    });
+repo.getUsersByRoomId = function (roomId) {
+  return RoomDomain.build({id: roomId}).getUsers({ attributes: UserDomain.publicFields});
 };
 
 /**
@@ -65,7 +55,7 @@ UserRepo.getUsersByRoomId = function (roomId) {
  * @returns {Promise}
  */
 
-UserRepo.checkCredentials = function (options) {
+repo.checkCredentials = function (options) {
   options = options || {};
 
   return UserDomain.findOne({
@@ -74,11 +64,7 @@ UserRepo.checkCredentials = function (options) {
       passwordHash: UserDomain.hashPassword(options.password, config.authentication.secrets.password)
     },
     attributes: UserDomain.publicFields
-  })
-    // to return native object instead Domain instance
-    .then(function (user) {
-      return Repository.pickPublic(user, UserDomain.publicFields);
-    });
+  });
 };
 
 /**
@@ -91,7 +77,7 @@ UserRepo.checkCredentials = function (options) {
  * @returns {Promise.<T>|*}
  */
 
-UserRepo.assertUserInRoom = function (options) {
+repo.assertUserInRoom = function (options) {
   options = options || {};
 
   return RoomDomain.build({id: options.roomId}).getUsers({
@@ -113,4 +99,4 @@ UserRepo.assertUserInRoom = function (options) {
  */
 
 
-module.exports = UserRepo;
+module.exports = repo;

@@ -4,20 +4,17 @@ var _ = require('lodash');
 
 var errors = require('../modules/errors/services/errors');
 
-var Repository = require('../helpers/repository');
+var repository = require('../helpers/repository');
 var models = require('../models');
 
-var PurchaseDomain = models.Purchase;
+var Purchase = models.Purchase;
 var PurchaseUsers = models.PurchaseUsers;
-var RoomUsers = models.RoomUsers;
 
 /**
  * Model definition:
  */
 
-var PurchaseRepo = function () {
-
-};
+var repo = {};
 
 /**
  * Class methods definitions:
@@ -29,7 +26,7 @@ var PurchaseRepo = function () {
  * Returns newly created purchase.
  */
 
-PurchaseRepo.create = function (data) {
+repo.create = function (data) {
   data = data || {};
 
   _.assign(data, {
@@ -40,14 +37,14 @@ PurchaseRepo.create = function (data) {
     amountPerUser: getAmountPerUser(data.amount, data.users)
   });
 
-  return PurchaseDomain.create(data)
+  return Purchase.create(data)
     .then(function (purchase) {
       // TODO: Check for each user existing in the room.
 
       return purchase.addPurchaseUsers(data.users)
         // it gets 'purchaseUsers' array in the callback
         .then(function () {
-          return purchase;
+          return repository.pickPublic(purchase, Purchase.publicFields);
         });
     });
 };
@@ -56,33 +53,39 @@ PurchaseRepo.create = function (data) {
  * Finds room by id.
  */
 
-PurchaseRepo.findById = function () {
-  return PurchaseDomain.findById.apply(PurchaseDomain, arguments)
-    .then(function (user) {
-      return Repository.pickPublic(user, PurchaseDomain.publicFields);
-    });
+repo.findById = function (id) {
+  return Purchase.findById(id, { attributes: Purchase.publicFields });
 };
 
 /**
- * Finds room by id.
+ * Finds users credits in specified room.
  */
 
-PurchaseRepo.getCreditsByRoomId = function (roomId) {
+repo.getCreditsByRoomId = function (roomId) {
   return PurchaseUsers.findAll({
     attributes: ['userId'],
     include: [
       {
-        model: PurchaseDomain,
+        model: Purchase,
         where: {roomId: roomId},
         attributes: [[models.sequelize.fn('SUM', models.sequelize.col('amount_per_user')), 'credit']],
         as: 'purchase'
       }
     ],
-    group: 'user_id'
-  })
-    .then(function (credits) {
-      return credits;
-    });
+    group: 'userId'
+  });
+};
+
+/**
+ * Finds users debits in specified room.
+ */
+
+repo.getDebitsByRoomId = function (roomId) {
+  return Purchase.findAll({
+    where: {roomId: roomId},
+    attributes: ['ownerId', [models.sequelize.fn('SUM', models.sequelize.col('amount')), 'debit']],
+    group: 'ownerId'
+  });
 };
 
 /**
@@ -92,29 +95,26 @@ PurchaseRepo.getCreditsByRoomId = function (roomId) {
  * @returns {Promise.<T>|*}
  */
 
-let selectablePurchaseUsersFields = ['userId'];
-
-PurchaseRepo.getPurchasesByRoomId = function (roomId) {
-  // TODO: move constants in config
-
-  return PurchaseDomain.findAll({
+repo.getPurchasesByRoomId = function (roomId) {
+  return Purchase.findAll({
     where: {roomId: roomId},
-    include: [{model: PurchaseUsers, attributes: selectablePurchaseUsersFields, as: 'users'}],
-    attributes:  PurchaseDomain.publicFields
-  })
-    .then(function (purchases) {
-      let publicFieldsWithIncludes = PurchaseDomain.publicFields.concat('users');
-
-      // TODO: bottleneck
-      return purchases.map(function (purchase) {
-        return Repository.pickPublic(purchase, publicFieldsWithIncludes);
-      });
-    });
+    include: [{model: PurchaseUsers, attributes: ['userId'], as: 'users'}],
+    attributes:  Purchase.publicFields
+  });
 };
 
 
 /**
  * Helper functions
+ */
+
+
+/**
+ * Returns amount per each user
+ *
+ * @param amount Full amount for all users
+ * @param users
+ * @returns {number}
  */
 
 function getAmountPerUser(amount, users) {
@@ -126,4 +126,8 @@ function getAmountPerUser(amount, users) {
   throw new errors.IncorrectDataError();
 }
 
-module.exports = PurchaseRepo;
+/**
+ * Exporting
+ */
+
+module.exports = repo;
