@@ -74,6 +74,7 @@ function init(app) {
   router.get('/rooms/:id', roomsController.show);
   router.post('/rooms', roomsController.create);
   router.post('/rooms/enter', roomsController.enter);
+  router.get('/rooms/:id/approve', roomsController.generateApprove);
 
   /**
    * Routes: Purchases
