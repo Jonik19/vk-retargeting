@@ -1,5 +1,8 @@
 'use strict';
 
+var _ = require('lodash');
+
+var config = require('../../config');
 var errors = require('../modules/errors/services/errors');
 
 var repository = require('../helpers/repository');
@@ -7,6 +10,7 @@ var models = require('../models');
 
 var UserDomain = models.User;
 var RoomDomain = models.Room;
+var RoomLinks = models.RoomLinks;
 
 /**
  * Model definition:
@@ -111,6 +115,27 @@ repo.createAndEnter = function (data) {
     })
     .then(function (room) {
       return repository.pickPublic(room, RoomDomain.publicFields);
+    });
+};
+
+/**
+ * Generates one time link for approving it in future by somebody.
+ *
+ * @param {Object} data
+ * @param {Number} data.roomId
+ */
+
+repo.generateApproveLink = function (data) {
+  data = data || {};
+
+  _.assign(data, {
+    roomId: data.roomId,
+    token: RoomLinks.generateToken(config.models.roomLinks.secrets.token)
+  });
+
+  return RoomLinks.create(data)
+    .then(function (roomLink) {
+      return repository.pickPublic(roomLink, RoomLinks.publicFields);
     });
 };
 
