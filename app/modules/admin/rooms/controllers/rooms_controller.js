@@ -77,4 +77,25 @@ controller.enter = function *() {
   response.success(this, success);
 };
 
+/**
+ * Generates
+ *
+ * @type {{}}
+ */
+
+controller.generateApprove = function *() {
+  let data = {
+    roomId: this.params.id,
+    userId: this.state.user.id
+  };
+
+  // Check user existing in this room
+  // TODO: check for owner. Only founder can generate approve links.
+  yield UserRepo.assertUserInRoom(data);
+
+  let link = yield RoomRepo.generateApproveLink(data);
+
+  response.success(this, link.token);
+};
+
 module.exports = controller;
