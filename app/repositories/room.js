@@ -140,6 +140,40 @@ repo.generateApproveLink = function (data) {
 };
 
 /**
+ * Finds link by specified token.
+ *
+ * @param {String} token
+ */
+
+repo.getLinkByToken = function (token) {
+  return RoomLinks.findOne({
+    where: { token: token, approvedBy: null },
+    attributes: RoomLinks.publicFields
+  }).then(function (link) {
+    // If there is no such link
+    if(null === link) {
+      throw new errors.IncorrectLinkError();
+    }
+
+    return link;
+  });
+};
+
+/**
+ * Marks link as approved by some user.
+ *
+ * @param {String} data
+ * @param {Number} data.userId User id approved by this link
+ * @param {Number} data.id Id of the link to update
+ */
+
+repo.approveLinkById = function (data) {
+  data = data || {};
+
+  return RoomLinks.update({approvedBy: data.userId}, {where: {id: data.id, approvedBy: null}});
+};
+
+/**
  * Helper functions
  */
 

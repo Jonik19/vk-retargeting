@@ -83,7 +83,7 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       validate: {}
     },
-    approvedBy: {
+    approvedBy: { // approved user id
       type: DataTypes.INTEGER,
       field: 'approved_by',
       allowNull: true,

@@ -86,6 +86,17 @@ handlers['AlreadyInRoomError'] = function (error) {
   };
 };
 
+
+handlers['IncorrectLinkError'] = function (error) {
+  return {
+    response: {
+      name: error.name,
+      message: 'This link is incorrect, it could be already approved by somebody else.'
+    },
+    status: 400
+  };
+};
+
 handlers['UnhandledError'] = function () {
   return {
     response: {

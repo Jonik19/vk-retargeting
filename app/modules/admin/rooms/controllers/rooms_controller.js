@@ -61,24 +61,7 @@ controller.create = function *() {
 };
 
 /**
- * Enter to room.
- *
- * @param next
- */
-
-controller.enter = function *() {
-  let data = {
-    roomId: this.request.body.id,
-    userId: this.state.user.id
-  };
-
-  let success = yield RoomRepo.enter(data);
-
-  response.success(this, success);
-};
-
-/**
- * Generates
+ * Generates approve link
  *
  * @type {{}}
  */
@@ -96,6 +79,33 @@ controller.generateApprove = function *() {
   let link = yield RoomRepo.generateApproveLink(data);
 
   response.success(this, link.token);
+};
+
+/**
+ * Enters in room by approved link
+ *
+ * @type {{}}
+ */
+
+controller.approve = function *() {
+  let token = this.params.token;
+
+  // Find link by token
+  let decodedLink = yield RoomRepo.getLinkByToken(token);
+
+  // Enter in room
+  let room = yield RoomRepo.enter({
+    userId: this.state.user.id,
+    roomId: decodedLink.roomId
+  });
+
+  // It can be organized using token instead id
+  yield RoomRepo.approveLinkById({
+    userId: this.state.user.id,
+    id: decodedLink.id
+  });
+
+  response.success(this, room);
 };
 
 module.exports = controller;
