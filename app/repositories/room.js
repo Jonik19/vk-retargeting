@@ -2,7 +2,7 @@
 
 var errors = require('../modules/errors/services/errors');
 
-var Repository = require('../helpers/repository');
+var repository = require('../helpers/repository');
 var models = require('../models');
 
 var UserDomain = models.User;
@@ -12,9 +12,7 @@ var RoomDomain = models.Room;
  * Model definition:
  */
 
-var RoomRepo = function () {
-
-};
+var repo = {};
 
 /**
  * Class methods definitions:
@@ -24,10 +22,10 @@ var RoomRepo = function () {
  * Creates model and returns it.
  */
 
-RoomRepo.create = function () {
-  return RoomDomain.create.apply(RoomDomain, arguments)
+repo.create = function (data) {
+  return RoomDomain.create(data)
     .then(function (user) {
-      return Repository.pickPublic(user, RoomDomain.publicFields);
+      return repository.pickPublic(user, RoomDomain.publicFields);
     });
 };
 
@@ -35,11 +33,10 @@ RoomRepo.create = function () {
  * Finds room by id.
  */
 
-RoomRepo.getById = function (id) {
-  return RoomDomain.findById(id)
-    .then(function (user) {
-      return Repository.pickPublic(user, RoomDomain.publicFields);
-    });
+repo.getById = function (id) {
+  return RoomDomain.findById(id, {
+    attributes: RoomDomain.publicFields
+  });
 };
 
 /**
@@ -49,14 +46,8 @@ RoomRepo.getById = function (id) {
  * @returns {Promise.<T>|*}
  */
 
-RoomRepo.getRooms = function (userId) {
-  return UserDomain.build({id: userId}).getRooms({ attributes: RoomDomain.publicFields})
-    .then(function (rooms) {
-      // TODO: bottleneck
-      return rooms.map(function (room) {
-        return Repository.pickPublic(room, RoomDomain.publicFields);
-      });
-    });
+repo.getRooms = function (userId) {
+  return UserDomain.build({id: userId}).getRooms({ attributes: RoomDomain.publicFields});
 };
 
 /**
@@ -68,14 +59,16 @@ RoomRepo.getRooms = function (userId) {
  * @returns {Promise.<T>|*}
  */
 
-RoomRepo.enter = function (options) {
+repo.enter = function (options) {
   options = options || {};
 
-  return RoomDomain.findById(options.roomId)
+  return RoomDomain.findById(options.roomId, {
+    attributes: RoomDomain.publicFields
+  })
     .then(function (room) {
       if(null === room) throw new errors.IncorrectDataError();
 
-      return RoomRepo.enterByModel({model: room, userId: options.userId});
+      return repo.enterByModel({model: room, userId: options.userId});
     });
 };
 
@@ -89,7 +82,7 @@ RoomRepo.enter = function (options) {
  * @returns {Promise.<T>|*}
  */
 
-RoomRepo.enterByModel = function (options) {
+repo.enterByModel = function (options) {
   options = options || {};
 
   return options.model.addUser(options.userId)
@@ -97,7 +90,7 @@ RoomRepo.enterByModel = function (options) {
       // if nothing is added throw an error. It means that current user is already in this room
       if(0 === inserted.length) throw new errors.AlreadyInRoomError();
 
-      return Repository.pickPublic(options.model, RoomDomain.publicFields);
+      return options.model;
     });
 };
 
@@ -109,12 +102,15 @@ RoomRepo.enterByModel = function (options) {
  * @returns {Promise.<T>|*}
  */
 
-RoomRepo.createAndEnter = function (data) {
+repo.createAndEnter = function (data) {
   data = data || {};
 
-  return RoomDomain.create.call(RoomDomain, data).
+  return RoomDomain.create(data).
     then(function (room) {
-      return RoomRepo.enterByModel({model: room, userId: data.userId});
+      return repo.enterByModel({model: room, userId: data.userId});
+    })
+    .then(function (room) {
+      return repository.pickPublic(room, RoomDomain.publicFields);
     });
 };
 
@@ -122,4 +118,4 @@ RoomRepo.createAndEnter = function (data) {
  * Helper functions
  */
 
-module.exports = RoomRepo;
+module.exports = repo;

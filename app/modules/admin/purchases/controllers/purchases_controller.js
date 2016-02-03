@@ -54,6 +54,27 @@ controller.creditsByRoom = function *() {
 };
 
 /**
+ * Returns users debits in specified room.
+ *
+ * @param next
+ */
+
+controller.debitsByRoom = function *() {
+
+  let data = {
+    roomId: this.params.roomId,
+    userId: this.state.user.id
+  };
+
+  // Check user existing in this room
+  yield UserRepo.assertUserInRoom(data);
+
+  let credits = yield PurchaseRepo.getDebitsByRoomId(data.roomId);
+
+  response.items(this, credits);
+};
+
+/**
  * Creates purchase.
  *
  * @param next

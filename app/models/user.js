@@ -29,8 +29,8 @@ options.classMethods = {};
  * @param models
  */
 
-options.classMethods.associate = function () {
-
+options.classMethods.associate = function (models) {
+  models.User.hasMany(models.Purchase, { foreignKey: 'ownerId', as: 'purchases' });
 };
 
 /**
