@@ -61,20 +61,51 @@ controller.create = function *() {
 };
 
 /**
- * Enter to room.
+ * Generates approve link
  *
- * @param next
+ * @type {{}}
  */
 
-controller.enter = function *() {
+controller.generateApprove = function *() {
   let data = {
-    roomId: this.request.body.id,
+    roomId: this.params.id,
     userId: this.state.user.id
   };
 
-  let success = yield RoomRepo.enter(data);
+  // Check user existing in this room
+  // TODO: check for owner. Only founder can generate approve links.
+  yield UserRepo.assertUserInRoom(data);
 
-  response.success(this, success);
+  let link = yield RoomRepo.generateApproveLink(data);
+
+  response.success(this, link.token);
+};
+
+/**
+ * Enters in room by approved link
+ *
+ * @type {{}}
+ */
+
+controller.approve = function *() {
+  let token = this.params.token;
+
+  // Find link by token
+  let decodedLink = yield RoomRepo.getLinkByToken(token);
+
+  // Enter in room
+  let room = yield RoomRepo.enter({
+    userId: this.state.user.id,
+    roomId: decodedLink.roomId
+  });
+
+  // It can be organized using token instead id
+  yield RoomRepo.approveLinkById({
+    userId: this.state.user.id,
+    id: decodedLink.id
+  });
+
+  response.success(this, room);
 };
 
 module.exports = controller;

@@ -23,5 +23,12 @@ module.exports = {
       sign: 'secret',
       password: 'secret'
     }
+  },
+  models: {
+    roomLinks: {
+      secrets: {
+        token: 'secret'
+      }
+    }
   }
 };
