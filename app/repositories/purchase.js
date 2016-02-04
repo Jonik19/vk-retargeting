@@ -123,7 +123,7 @@ function getAmountPerUser(amount, users) {
     return amount/users.length;
   }
 
-  throw new errors.IncorrectDataError();
+  throw new errors.IncorrectDataError('Please, choose at least one user');
 }
 
 /**
