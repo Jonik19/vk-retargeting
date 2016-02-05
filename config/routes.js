@@ -49,7 +49,6 @@ function init(app) {
 
   var authenticationController = require('../app/modules/authentication/controllers/authentication_controller');
 
-//router.post('/sign-out', compose([authenticationController.onlyAuthenticated, authenticationController.signOut]));
   router.post('/sign-up', compose([authenticationController.onlyNotAuthenticated, authenticationController.signUp]));
   router.post('/sign-in', compose([authenticationController.onlyNotAuthenticated, authenticationController.signIn]));
   router.get('/check', compose([authenticationController.onlyAuthenticated, authenticationController.check]));

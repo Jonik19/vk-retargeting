@@ -13,13 +13,13 @@ var RoomDomain = models.Room;
 var RoomLinks = models.RoomLinks;
 
 /**
- * Model definition:
+ * Repo definition:
  */
 
 var repo = {};
 
 /**
- * Class methods definitions:
+ * Methods definitions:
  */
 
 /**
