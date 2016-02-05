@@ -78,7 +78,18 @@ module.exports = function (sequelize, DataTypes) {
       field: 'username',
       allowNull: false,
       validate: {
-        is: /^[a-zA-Z0-9]+$/i
+        is: /^[a-zA-Z0-9]+$/i,
+        isUnique: function (value, next) {
+          User.find({where: {username: value}, attributes: ['id']})
+            .done(function(user) {
+
+              if (null !== user) {
+                return next('Username already in use!');
+              }
+
+              next();
+            });
+        }
       }
     },
     name: {

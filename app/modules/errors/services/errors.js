@@ -7,7 +7,9 @@ errors['ForbiddenError'] = ForbiddenError;
 errors['AlreadyInRoomError'] = AlreadyInRoomError;
 errors['IncorrectLinkError'] = IncorrectLinkError;
 
-function IncorrectDataError() {}
+function IncorrectDataError(message) {
+  this.message = message;
+}
 IncorrectDataError.prototype.name = 'IncorrectDataError';
 
 function ForbiddenError() {}

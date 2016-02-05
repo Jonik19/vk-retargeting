@@ -63,7 +63,7 @@ controller.signIn = function *() {
   var user = yield UserRepo.checkCredentials(data);
 
   if(user === null) {
-    throw new errors.IncorrectDataError();
+    throw new errors.IncorrectDataError('Email or password invalid');
   }
 
   response.success(this, authService.generateUserResponse(user, authService.sign(user)));

@@ -29,7 +29,7 @@ handlers['SequelizeValidationError'] = handlers['SequelizeUniqueConstraintError'
   return {
     response: {
       name: error.name,
-      message: 'Validation error. Please, type correct data and try again.',
+      message: error.message || 'Validation error. Please, type correct data and try again.',
       errors: error.errors
     },
     status: 400
@@ -50,7 +50,7 @@ handlers['IncorrectDataError'] = function (error) {
   return {
     response: {
       name: error.name,
-      message: 'Please, type correct data and try again'
+      message: error.message || 'Please, type correct data and try again'
     },
     status: 400
   };
