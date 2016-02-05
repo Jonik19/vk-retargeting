@@ -11,13 +11,13 @@ var UserDomain = models.User;
 var RoomDomain = models.Room;
 
 /**
- * Model definition:
+ * Repo definition:
  */
 
 var repo = {};
 
 /**
- * Class methods definitions:
+ * Methods definitions:
  */
 
 /**

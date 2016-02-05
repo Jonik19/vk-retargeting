@@ -11,13 +11,13 @@ var Purchase = models.Purchase;
 var PurchaseUsers = models.PurchaseUsers;
 
 /**
- * Model definition:
+ * Repo definition:
  */
 
 var repo = {};
 
 /**
- * Class methods definitions:
+ * Methods definitions:
  */
 
 
@@ -50,7 +50,7 @@ repo.create = function (data) {
 };
 
 /**
- * Finds room by id.
+ * Finds purchase by id.
  */
 
 repo.findById = function (id) {
