@@ -43,49 +43,14 @@ function init(app) {
    * Your routes go here
    */
 
-  /**
-   * Routes: Authentication
-   */
-
-  var authenticationController = require('../app/modules/authentication/controllers/authentication_controller');
-
-  router.post('/sign-up', compose([authenticationController.onlyNotAuthenticated, authenticationController.signUp]));
-  router.post('/sign-in', compose([authenticationController.onlyNotAuthenticated, authenticationController.signIn]));
-  router.get('/check', compose([authenticationController.onlyAuthenticated, authenticationController.check]));
 
   /**
    * Routes: Users
    */
 
-  var usersController = require('../app/modules/admin/users/controllers/users_controller');
+  var searchController = require('../app/modules/search/controllers/search_controller');
 
-  router.use(mount('/users', authenticationController.onlyAuthenticated));
-  router.get('/users/by_room/:roomId', usersController.byRoom);
-
-  /**
-   * Routes: Rooms
-   */
-
-  var roomsController = require('../app/modules/admin/rooms/controllers/rooms_controller');
-
-  router.use(mount('/rooms', authenticationController.onlyAuthenticated));
-  router.get('/rooms', roomsController.index);
-  router.get('/rooms/:id', roomsController.show);
-  router.post('/rooms', roomsController.create);
-  router.get('/rooms/:id/approve', roomsController.generateApprove);
-  router.post('/rooms/approve/:token', roomsController.approve);
-
-  /**
-   * Routes: Purchases
-   */
-
-  var purchasesController = require('../app/modules/admin/purchases/controllers/purchases_controller');
-
-  router.use(mount('/rooms/purchases', authenticationController.onlyAuthenticated));
-  router.get('/rooms/:roomId/purchases', purchasesController.index);
-  router.post('/rooms/:roomId/purchases', purchasesController.create);
-  router.get('/rooms/:roomId/purchases/credits', purchasesController.creditsByRoom);
-  router.get('/rooms/:roomId/purchases/debits', purchasesController.debitsByRoom);
+  router.get('/search', searchController.search);
 
   /**
    * Return instance of router. Don't delete it.
