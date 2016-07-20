@@ -20,10 +20,27 @@ var repo = {};
  * Creates model and returns it.
  */
 
-repo.get = function (data) {
-  var options = _.assign(data, {v: '5.52'});
+repo.get = function (forms) {
+  console.log(forms);
+  var promises = [];
 
-  return vk.call('newsfeed.search', options);
+  forms.forEach(function (form) {
+    promises.push(vk.call('newsfeed.search', repo._getFormOptions(form)));
+  });
+
+  return Promise.all(promises);
+};
+
+/**
+ * Creates model and returns it.
+ */
+
+repo._getFormOptions = function (form) {
+  var r =  _.assign({v: '5.52'}, form);
+
+  console.log(r);
+
+  return r;
 };
 
 /**

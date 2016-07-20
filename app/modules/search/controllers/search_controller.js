@@ -17,21 +17,42 @@ var controller = {};
  */
 
 controller.search = function *() {
-  var result = yield searchRepo.get(this.request.query);
+  var params = _getSearchParams(this);
 
-  var ids = handleRepo.getFieldArrayFrom(result.items, 'owner_id');
-  ids = handleRepo.getOnlyUsersIds(ids);
-  ids = handleRepo.getUnique(ids);
+  console.log(params);
 
-  response.items(this, ids);
+  var result = yield searchRepo.get(params);
+
+  console.log(result);
+
+  response.items(this, [1,2,3,4]);
 };
 
 module.exports = controller;
 
-/*
- * Helpers
+/**
+ *
+ *
+ * @param next
  */
 
-function getSearch() {
+function _getSearchParams(ctx) {
+  var forms = ctx.request.query.forms;
+  var arr = [];
 
+  //Passed array
+
+  if(Array.isArray(forms)) {
+    return forms;
+  }
+
+  // Passed object instead of array
+
+  if(forms) {
+    arr.push(JSON.parse(forms));
+
+    return arr;
+  }
+
+  return [];
 }
